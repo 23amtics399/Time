@@ -1,0 +1,177 @@
+/* Home.css */
+
+.home-page {
+  padding: 2.5rem 1.5rem 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Hero */
+.home-hero {
+  text-align: center;
+  padding: 3rem 1rem 2.5rem;
+}
+
+.home-hero-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.home-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+
+.home-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Groups */
+.home-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.home-group-header {
+  margin-bottom: 1rem;
+}
+
+.home-group-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.home-group-desc {
+  color: var(--text-muted);
+}
+
+/* Grid */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.875rem;
+}
+
+/* Tool card */
+.tool-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card-accent, var(--accent));
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.tool-card:hover {
+  border-color: var(--card-accent, var(--accent));
+  background: var(--surface-alt);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.tool-card:hover::before {
+  opacity: 1;
+}
+
+.tool-card:active {
+  transform: translateY(0);
+}
+
+.tool-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--card-accent, var(--accent)) 15%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--card-accent, var(--accent));
+}
+
+.tool-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tool-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tool-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.tool-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.tool-card-arrow {
+  color: var(--text-faint);
+  font-size: 1rem;
+  transition: transform var(--dur-fast) var(--ease),
+              color var(--dur-fast) var(--ease);
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.tool-card:hover .tool-card-arrow {
+  transform: translateX(3px);
+  color: var(--card-accent, var(--accent));
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .tool-card,
+  .tool-card-arrow { transition: none; }
+  .tool-card:hover { transform: none; }
+}
+
+@media (max-width: 480px) {
+  .home-page { padding: 1.5rem 1rem 3rem; }
+  .home-hero  { padding: 2rem 0.5rem 1.5rem; }
+  .home-grid  { grid-template-columns: 1fr; }
+}

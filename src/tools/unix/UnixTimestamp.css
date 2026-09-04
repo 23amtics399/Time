@@ -1,0 +1,73 @@
+.unix-live {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+.unix-live-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.unix-live-val {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.unix-human { margin-top: 0.25rem; }
+
+.unix-section { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.unix-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.unix-input-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.unix-input-row .input { flex: 1; min-width: 0; }
+
+.unix-error-input { border-color: var(--danger) !important; }
+.unix-error { color: var(--danger); }
+
+.unix-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.875rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.unix-result-main {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.unix-result-pair {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.unix-result-pair:last-child { border-bottom: none; }
+
+.unix-result-num { font-size: 1.1rem; color: var(--text); }

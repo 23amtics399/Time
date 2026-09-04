@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.*
+.DS_Store
+.vscode/
+.idea/
+coverage/
+.system_generated/
+scratch/
+brain/

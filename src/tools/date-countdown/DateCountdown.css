@@ -1,0 +1,67 @@
+.dcd-page { align-items: center; }
+
+.dcd-display {
+  text-align: center;
+  width: 100%;
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+}
+
+.dcd-event-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.dcd-past { font-size: 1rem; }
+
+.dcd-units {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dcd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dcd-val {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1;
+  text-shadow: 0 0 24px var(--accent-glow);
+}
+
+.dcd-unit-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.dcd-sep {
+  font-size: 2.5rem;
+  color: var(--text-faint);
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.dcd-target-date { margin-top: 0.25rem; }
+
+.dcd-config { width: 100%; max-width: 580px; }
+.dcd-config-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.dcd-presets { width: 100%; max-width: 580px; }
+.dcd-preset-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }

@@ -1,0 +1,111 @@
+.mp-page { max-width: 1000px; }
+
+.mp-add { margin-bottom: 0; }
+.mp-add-row { display: flex; gap: 0.75rem; }
+.mp-add-row .select { flex: 1; }
+
+.mp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.mp-legend-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+.mp-legend-work    { background: var(--success-dim); border: 1px solid var(--success); }
+.mp-legend-off     { background: var(--surface-alt); border: 1px solid var(--border); }
+.mp-legend-night   { background: rgba(100, 110, 200, 0.2); border: 1px solid rgba(100, 110, 200, 0.35); }
+.mp-legend-current { background: var(--accent-dim); border: 1px solid var(--accent); }
+
+.mp-grid {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.mp-zone-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+}
+
+.mp-zone-row:last-child { border-bottom: none; }
+
+.mp-header-row { background: var(--bg-secondary); }
+
+.mp-zone-label {
+  min-width: 180px;
+  max-width: 180px;
+  padding: 0.625rem 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.mp-zone-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+.mp-slots {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.mp-slot {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 0 1px;
+  font-size: 0.6rem;
+  color: var(--text-faint);
+  cursor: default;
+  transition: filter var(--dur-fast) var(--ease);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.mp-slot + .mp-slot { border-left: 1px solid rgba(255,255,255,0.03); }
+
+.mp-slot-work  { background: var(--success-dim); }
+.mp-slot-off   { background: var(--surface-alt); }
+.mp-slot-night { background: rgba(80, 90, 170, 0.18); }
+
+.mp-slot-highlight { filter: brightness(1.5); }
+.mp-slot-current   { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.mp-slot-hour {
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+  font-size: 0.58rem;
+  color: var(--text-faint);
+  user-select: none;
+}
+
+.mp-header-slot { height: 24px; background: transparent; }
+
+.mp-hour-labels .mp-slot { cursor: default; }
+
+@media (max-width: 600px) {
+  .mp-zone-label { min-width: 120px; max-width: 120px; }
+}

@@ -1,0 +1,30 @@
+.analog-page { display: flex; flex-direction: column; align-items: center; }
+
+.analog-wrap {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.analog-canvas {
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg), var(--glow);
+  display: block;
+}
+
+.analog-time-text {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.analog-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--bg);
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+}
