@@ -130,11 +130,7 @@ const ACCENT_VARS = {
 export default function Home() {
   return (
     <>
-      <SEO
-        title="Free Online Time Utilities"
-        description="Free, fast, and beautifully designed time tools — digital clocks, stopwatch, countdown timers, Pomodoro, timezone converter, Unix timestamp, and more. No sign-up required."
-        path="/"
-      />
+      <SEO path="/" />
 
       <div className="home-page">
         {/* Hero */}
@@ -185,6 +181,66 @@ export default function Home() {
             </section>
           ))}
         </div>
+
+        {/* Informative Crawlable Overview */}
+        <section className="home-about card" aria-label="About Time Tools">
+          <h2 className="home-about-heading">Browser-Based Time Utilities Built for Speed & Precision</h2>
+          <p className="home-about-text text-muted">
+            Time Tools brings together essential timing, conversion, and scheduling utilities into a single lightweight web application. Whether you need a distraction-free digital clock for your desk, a millisecond stopwatch for athletic training, an interval Pomodoro timer for deep work sessions, or an international meeting planner for remote teams, every utility runs entirely within your browser with zero latency.
+          </p>
+
+          <div className="home-about-grid">
+            <div className="home-about-card">
+              <h3 className="home-card-title">Privacy & Local-First</h3>
+              <p className="home-card-text text-muted text-sm">
+                All time calculations, alarm schedules, and stopwatch splits are computed directly on your device. We do not track your activity, record your time entries, or require account creation.
+              </p>
+            </div>
+            <div className="home-about-card">
+              <h3 className="home-card-title">Full Offline Capability</h3>
+              <p className="home-card-text text-muted text-sm">
+                Once loaded, Time Tools operates seamlessly without an active internet connection. Synthesized audio alarms, canvas graphics, and timezone calculations are executed client-side.
+              </p>
+            </div>
+            <div className="home-about-card">
+              <h3 className="home-card-title">Daylight Saving & IANA Accuracy</h3>
+              <p className="home-card-text text-muted text-sm">
+                International clocks and timezone converters leverage standard IANA timezone databases built into modern browsers, guaranteeing accurate local offsets and seasonal DST transitions.
+              </p>
+            </div>
+          </div>
+
+          <div className="home-faqs">
+            <h3 className="home-faqs-title">Frequently Asked Questions</h3>
+            <details className="faq-item" open>
+              <summary className="faq-question">
+                <span>Are all utilities on Time Tools free to use?</span>
+                <span className="faq-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div className="faq-answer text-muted text-sm">
+                <p>Yes. Every clock, stopwatch, countdown timer, converter, and planner is completely free, ad-free, and unrestricted for personal, commercial, and educational use.</p>
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-question">
+                <span>Do timers and stopwatches continue running if I switch tabs?</span>
+                <span className="faq-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div className="faq-answer text-muted text-sm">
+                <p>Yes. Active timers, stopwatches, and Pomodoro sessions store absolute target timestamps in browser storage, ensuring elapsed and remaining time remain strictly accurate regardless of tab backgrounding.</p>
+              </div>
+            </details>
+            <details className="faq-item">
+              <summary className="faq-question">
+                <span>How do I synchronize my preferred timezone across clocks?</span>
+                <span className="faq-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div className="faq-answer text-muted text-sm">
+                <p>On the Digital Clock page, choose your target timezone and check the "Use this timezone across Time" option. The Analog Clock and system displays will instantly synchronize to that timezone.</p>
+              </div>
+            </details>
+          </div>
+        </section>
       </div>
     </>
   );

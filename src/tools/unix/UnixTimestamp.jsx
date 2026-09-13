@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { toUnix, fromUnix, pad } from '../../utils/time';
 import './UnixTimestamp.css';
@@ -65,11 +67,7 @@ export default function UnixTimestamp() {
 
   return (
     <>
-      <SEO
-        title="Unix Timestamp Converter"
-        description="Convert Unix timestamps to human-readable dates and back. Live epoch counter included."
-        path="/unix"
-      />
+      <SEO path="/unix" />
 
       <div className="tool-page">
         <div className="tool-header">
@@ -167,6 +165,8 @@ export default function UnixTimestamp() {
             </div>
           )}
         </div>
+
+        <ToolGuide guide={ROUTES_SEO['/unix'].guide} toolName="Unix Timestamp Converter" />
       </div>
     </>
   );

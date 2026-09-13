@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { TIMEZONES } from '../../data/timezones';
 import { toDatetimeLocal } from '../../utils/time';
 import './TimezoneConverter.css';
@@ -103,11 +105,7 @@ export default function TimezoneConverter() {
 
   return (
     <>
-      <SEO
-        title="Timezone Converter"
-        description="Convert a date and time between any two timezones instantly, with offset comparison."
-        path="/timezone"
-      />
+      <SEO path="/timezone" />
 
       <div className="tool-page">
         <div className="tool-header">
@@ -163,6 +161,8 @@ export default function TimezoneConverter() {
             </p>
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/timezone'].guide} toolName="Timezone Converter" />
       </div>
     </>
   );

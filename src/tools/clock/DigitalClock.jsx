@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { useTimeContext } from '../../contexts/TimeContext';
 import { pad } from '../../utils/time';
@@ -53,17 +55,20 @@ export default function DigitalClock() {
 
   return (
     <>
-      <SEO
-        title="Digital Clock"
-        description="A clean, full-screen digital clock with 12/24-hour format, seconds display, and multiple timezone support."
-        path="/clock"
-      />
+      <SEO path="/clock" />
 
       <div className={`dc-page ${fullscreen ? 'dc-fullscreen' : ''}`}>
         {fullscreen && (
           <button className="btn btn-ghost exit-fullscreen" onClick={toggleFullscreen} aria-label="Exit full screen">
             <ExitFullscreenIcon />
           </button>
+        )}
+
+        {!fullscreen && (
+          <div className="tool-header">
+            <h1>Digital Clock</h1>
+            <p>Full-screen digital clock with 12/24-hour format and timezone support.</p>
+          </div>
         )}
 
         <div className="dc-clock-wrap" role="timer" aria-live="polite" aria-label="Current time">
@@ -83,54 +88,58 @@ export default function DigitalClock() {
         </div>
 
         {!fullscreen && (
-          <div className="dc-controls card">
-            <div className="dc-controls-row">
-              <label className="field-label" htmlFor="dc-tz-select">Timezone</label>
-              <select
-                id="dc-tz-select"
-                className="select"
-                value={timezone}
-                onChange={e => setTimezone(e.target.value)}
-              >
-                {TIMEZONES_SIMPLE.map(tz => (
-                  <option key={tz.value} value={tz.value}>{tz.label}</option>
-                ))}
-              </select>
-              <label className="dc-sync-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', cursor: 'pointer' }}>
-                <input type="checkbox" checked={useGlobalTimezone} onChange={e => setUseGlobalTimezone(e.target.checked)} />
-                <span className="text-sm text-muted">Use this timezone across Time</span>
-              </label>
+          <>
+            <div className="dc-controls card">
+              <div className="dc-controls-row">
+                <label className="field-label" htmlFor="dc-tz-select">Timezone</label>
+                <select
+                  id="dc-tz-select"
+                  className="select"
+                  value={timezone}
+                  onChange={e => setTimezone(e.target.value)}
+                >
+                  {TIMEZONES_SIMPLE.map(tz => (
+                    <option key={tz.value} value={tz.value}>{tz.label}</option>
+                  ))}
+                </select>
+                <label className="dc-sync-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={useGlobalTimezone} onChange={e => setUseGlobalTimezone(e.target.checked)} />
+                  <span className="text-sm text-muted">Use this timezone across Time</span>
+                </label>
+              </div>
+
+              <div className="dc-toggles">
+                <button
+                  className={`btn ${is24h ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={() => setTimeFormat('24h')}
+                  aria-pressed={is24h}
+                >24h</button>
+                <button
+                  className={`btn ${!is24h ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={() => setTimeFormat('12h')}
+                  aria-pressed={!is24h}
+                >12h</button>
+
+                <button
+                  className={`btn ${showSeconds ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={() => setShowSec(s => !s)}
+                  aria-pressed={showSeconds}
+                >
+                  {showSeconds ? 'Seconds on' : 'Seconds off'}
+                </button>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={toggleFullscreen}
+                  aria-label="Go full screen"
+                >
+                  <FullscreenIcon /> Full screen
+                </button>
+              </div>
             </div>
 
-            <div className="dc-toggles">
-              <button
-                className={`btn ${is24h ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setTimeFormat('24h')}
-                aria-pressed={is24h}
-              >24h</button>
-              <button
-                className={`btn ${!is24h ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setTimeFormat('12h')}
-                aria-pressed={!is24h}
-              >12h</button>
-
-              <button
-                className={`btn ${showSeconds ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setShowSec(s => !s)}
-                aria-pressed={showSeconds}
-              >
-                {showSeconds ? 'Seconds on' : 'Seconds off'}
-              </button>
-
-              <button
-                className="btn btn-secondary"
-                onClick={toggleFullscreen}
-                aria-label="Go full screen"
-              >
-                <FullscreenIcon /> Full screen
-              </button>
-            </div>
-          </div>
+            <ToolGuide guide={ROUTES_SEO['/clock'].guide} toolName="Digital Clock" />
+          </>
         )}
       </div>
     </>

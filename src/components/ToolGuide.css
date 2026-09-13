@@ -1,0 +1,225 @@
+/* ============================================================
+   ToolGuide.css — Rich Explanatory Content Styling
+   ============================================================ */
+
+.tool-guide {
+  margin-top: 3.5rem;
+  padding: 2.25rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  text-align: left;
+  max-width: 900px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tool-guide-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.5rem;
+}
+
+.tool-guide-intro {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.tool-guide-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tool-guide-heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+/* Steps list */
+.tool-guide-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tool-guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  line-height: 1.6;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Cards Grid */
+.tool-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.tool-guide-feature-card,
+.tool-guide-usecase-card {
+  padding: 1.25rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+}
+
+.tool-guide-feature-card:hover,
+.tool-guide-usecase-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.feature-title,
+.usecase-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.feature-desc,
+.usecase-desc {
+  line-height: 1.55;
+}
+
+/* FAQs */
+.tool-guide-faqs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease);
+}
+
+.faq-item[open] {
+  border-color: var(--border-hover);
+}
+
+.faq-question {
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-chevron {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  line-height: 1.6;
+}
+
+/* Related tools */
+.tool-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.tool-related-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--dur-base) var(--ease);
+}
+
+.tool-related-card:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+  transform: translateY(-2px);
+}
+
+.related-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.related-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.related-arrow {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.tool-related-card:hover .related-arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 640px) {
+  .tool-guide {
+    padding: 1.5rem 1rem;
+    margin-top: 2.5rem;
+  }
+  .tool-guide-grid,
+  .tool-related-grid {
+    grid-template-columns: 1fr;
+  }
+}

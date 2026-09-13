@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { useTimerContext } from '../../contexts/TimerContext';
 import EditableTimeDisplay from '../../components/EditableTimeDisplay';
-import { pad } from '../../utils/time';
 import { playTestSound, warmupAudio } from '../../utils/audio';
 import './Pomodoro.css';
 
@@ -164,11 +165,7 @@ export default function Pomodoro() {
 
   return (
     <>
-      <SEO
-        title="Pomodoro Timer"
-        description="A customizable Pomodoro Timer with 25-minute work sessions, short and long breaks, and audio alerts."
-        path="/pomodoro"
-      />
+      <SEO path="/pomodoro" />
 
       <div className="tool-page pom-page">
         <div className="tool-header" style={{ textAlign: 'center' }}>
@@ -312,6 +309,8 @@ export default function Pomodoro() {
             </div>
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/pomodoro'].guide} toolName="Pomodoro Timer" />
       </div>
     </>
   );

@@ -7,6 +7,9 @@ import { useState, useEffect } from 'react';
  */
 export function useLocalStorage(key, defaultValue) {
   const [value, setValue] = useState(() => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return defaultValue;
+    }
     try {
       const item = localStorage.getItem(key);
       return item !== null ? JSON.parse(item) : defaultValue;
@@ -16,6 +19,7 @@ export function useLocalStorage(key, defaultValue) {
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {

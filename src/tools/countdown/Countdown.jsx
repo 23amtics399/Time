@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useTimerContext } from '../../contexts/TimerContext';
 import EditableTimeDisplay from '../../components/EditableTimeDisplay';
 import { playTestSound, warmupAudio } from '../../utils/audio';
@@ -120,11 +122,7 @@ export default function Countdown() {
 
   return (
     <>
-      <SEO
-        title="Countdown Timer"
-        description="Set a countdown timer with quick presets or a custom duration. Audio alert when time's up."
-        path="/countdown"
-      />
+      <SEO path="/countdown" />
 
       <div className="tool-page cd-page">
         <div className="tool-header">
@@ -199,6 +197,8 @@ export default function Countdown() {
             ))}
           </div>
         </div>
+
+        <ToolGuide guide={ROUTES_SEO['/countdown'].guide} toolName="Countdown Timer" />
       </div>
     </>
   );

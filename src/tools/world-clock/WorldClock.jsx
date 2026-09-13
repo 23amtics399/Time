@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { useTimeContext } from '../../contexts/TimeContext';
@@ -78,11 +80,7 @@ export default function WorldClock() {
 
   return (
     <>
-      <SEO
-        title="World Clock"
-        description="See the current time in multiple cities and timezones simultaneously. Add and remove timezones instantly."
-        path="/world-clock"
-      />
+      <SEO path="/world-clock" />
 
       <div className="tool-page">
         <div className="tool-header">
@@ -129,6 +127,8 @@ export default function WorldClock() {
             ))}
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/world-clock'].guide} toolName="World Clock" />
       </div>
     </>
   );

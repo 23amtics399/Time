@@ -1,5 +1,7 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useTimerContext } from '../../contexts/TimerContext';
 import { formatDuration, msToComponents, pad } from '../../utils/time';
 import './Stopwatch.css';
@@ -82,11 +84,7 @@ export default function Stopwatch() {
 
   return (
     <>
-      <SEO
-        title="Stopwatch"
-        description="A precise browser-based stopwatch with lap times, split detection, and copy to clipboard."
-        path="/stopwatch"
-      />
+      <SEO path="/stopwatch" />
 
       <div className="tool-page sw-page">
         <div className="tool-header">
@@ -158,6 +156,8 @@ export default function Stopwatch() {
             </div>
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/stopwatch'].guide} toolName="Stopwatch" />
       </div>
     </>
   );

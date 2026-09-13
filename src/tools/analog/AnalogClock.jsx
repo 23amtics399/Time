@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { useTimeContext } from '../../contexts/TimeContext';
 import './AnalogClock.css';
@@ -57,18 +59,12 @@ function drawClock(canvas, now) {
   let h = now.getHours();
   let m = now.getMinutes();
   let s = now.getSeconds();
-  let dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  let timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
   if (canvas.dataset.timezone && canvas.dataset.timezone !== 'local') {
     const fmtTime = new Intl.DateTimeFormat('en-US', { timeZone: canvas.dataset.timezone, hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
     const parts = fmtTime.formatToParts(now);
     h = parseInt(parts.find(p => p.type === 'hour')?.value || h, 10) % 24;
     m = parseInt(parts.find(p => p.type === 'minute')?.value || m, 10);
     s = parseInt(parts.find(p => p.type === 'second')?.value || s, 10);
-
-    dateStr = new Intl.DateTimeFormat('en-US', { timeZone: canvas.dataset.timezone, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(now);
-    timeStr = new Intl.DateTimeFormat('en-US', { timeZone: canvas.dataset.timezone, hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(now);
   }
 
   const secVal  = s + ms / 1000;
@@ -163,11 +159,7 @@ export default function AnalogClock() {
 
   return (
     <>
-      <SEO
-        title="Analog Clock"
-        description="A smooth-sweep canvas-based analog clock with a clean, minimal design."
-        path="/analog"
-      />
+      <SEO path="/analog" />
 
       <div className={`tool-page analog-page ${fullscreen ? 'analog-fullscreen' : ''}`}>
         {fullscreen && (
@@ -193,11 +185,15 @@ export default function AnalogClock() {
         </div>
 
         {!fullscreen && (
-          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <button className="btn btn-secondary" onClick={() => setFullscreen(true)} aria-label="Go full screen">
-              <FullscreenIcon /> Full screen
-            </button>
-          </div>
+          <>
+            <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+              <button className="btn btn-secondary" onClick={() => setFullscreen(true)} aria-label="Go full screen">
+                <FullscreenIcon /> Full screen
+              </button>
+            </div>
+
+            <ToolGuide guide={ROUTES_SEO['/analog'].guide} toolName="Analog Clock" />
+          </>
         )}
       </div>
     </>

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { dateDiff, toDatetimeLocal } from '../../utils/time';
 import './TimeDiff.css';
 
@@ -30,7 +32,7 @@ export default function TimeDiff() {
     setResult({ ...diff, from: f, to: t });
   }
 
-  function useNow(field) {
+  function applyNow(field) {
     const val = toDatetimeLocal(new Date());
     if (field === 'from') setFrom(val);
     else setTo(val);
@@ -38,11 +40,7 @@ export default function TimeDiff() {
 
   return (
     <>
-      <SEO
-        title="Time Difference Calculator"
-        description="Calculate the exact difference between two dates and times in days, hours, minutes, and seconds."
-        path="/time-diff"
-      />
+      <SEO path="/time-diff" />
 
       <div className="tool-page">
         <div className="tool-header">
@@ -57,7 +55,7 @@ export default function TimeDiff() {
               <div className="td-input-row">
                 <input id="td-from" className="input" type="datetime-local" value={from}
                   onChange={e => setFrom(e.target.value)} />
-                <button className="btn btn-secondary btn-sm" onClick={() => useNow('from')}>Now</button>
+                <button className="btn btn-secondary btn-sm" onClick={() => applyNow('from')}>Now</button>
               </div>
             </div>
             <div>
@@ -65,7 +63,7 @@ export default function TimeDiff() {
               <div className="td-input-row">
                 <input id="td-to" className="input" type="datetime-local" value={to}
                   onChange={e => setTo(e.target.value)} />
-                <button className="btn btn-secondary btn-sm" onClick={() => useNow('to')}>Now</button>
+                <button className="btn btn-secondary btn-sm" onClick={() => applyNow('to')}>Now</button>
               </div>
             </div>
           </div>
@@ -101,6 +99,8 @@ export default function TimeDiff() {
             </div>
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/time-diff'].guide} toolName="Time Difference Calculator" />
       </div>
     </>
   );

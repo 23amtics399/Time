@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { toDatetimeLocal, addDuration } from '../../utils/time';
 import './AddSubtract.css';
 
@@ -48,11 +50,7 @@ export default function AddSubtract() {
 
   return (
     <>
-      <SEO
-        title="Add / Subtract Time"
-        description="Add or subtract years, months, days, hours, minutes, and seconds from any date and time."
-        path="/add-subtract"
-      />
+      <SEO path="/add-subtract" />
 
       <div className="tool-page">
         <div className="tool-header">
@@ -124,6 +122,8 @@ export default function AddSubtract() {
             <p className="text-faint text-xs">Unix: {Math.floor(result.output.getTime() / 1000)}</p>
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/add-subtract'].guide} toolName="Add or Subtract Time" />
       </div>
     </>
   );

@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { TIMEZONES } from '../../data/timezones';
 import { toDatetimeLocal } from '../../utils/time';
@@ -82,11 +84,7 @@ export default function MeetingPlanner() {
 
   return (
     <>
-      <SEO
-        title="Meeting Planner"
-        description="Compare time zones side-by-side to find the best meeting time for distributed teams."
-        path="/meeting"
-      />
+      <SEO path="/meeting" />
 
       <div className="tool-page mp-page">
         <div className="tool-header">
@@ -153,6 +151,8 @@ export default function MeetingPlanner() {
         <p className="text-faint text-xs" style={{ textAlign: 'center' }}>
           Showing 24 hours for today (UTC {baseUtc.toDateString()})
         </p>
+
+        <ToolGuide guide={ROUTES_SEO['/meeting'].guide} toolName="Meeting Planner" />
       </div>
     </>
   );

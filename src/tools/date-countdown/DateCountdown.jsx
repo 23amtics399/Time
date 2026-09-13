@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { dateDiff, pad } from '../../utils/time';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -40,11 +42,7 @@ export default function DateCountdown() {
 
   return (
     <>
-      <SEO
-        title="Date Countdown"
-        description="Count down the days, hours, minutes, and seconds to any future event or date."
-        path="/date-countdown"
-      />
+      <SEO path="/date-countdown" />
 
       <div className="tool-page dcd-page">
         <div className="tool-header" style={{ textAlign: 'center' }}>
@@ -115,6 +113,8 @@ export default function DateCountdown() {
             ))}
           </div>
         </div>
+
+        <ToolGuide guide={ROUTES_SEO['/date-countdown'].guide} toolName="Date Countdown" />
       </div>
     </>
   );

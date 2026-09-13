@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import SEO from '../../components/SEO';
+import ToolGuide from '../../components/ToolGuide';
+import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { useAlarmContext } from '../../contexts/AlarmContext';
 import { useTimeContext } from '../../contexts/TimeContext';
@@ -121,11 +123,7 @@ export default function Alarm() {
 
   return (
     <>
-      <SEO
-        title="Alarm"
-        description="Set browser alarms with desktop notifications and audio alerts. No sign-up required."
-        path="/alarm"
-      />
+      <SEO path="/alarm" />
 
       <div className="tool-page alarm-page">
         <div className="tool-header">
@@ -208,6 +206,8 @@ export default function Alarm() {
             ))}
           </div>
         )}
+
+        <ToolGuide guide={ROUTES_SEO['/alarm'].guide} toolName="Alarm Clock" />
       </div>
     </>
   );
