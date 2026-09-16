@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/prerender.js",
     "test:seo": "node scripts/verify-seo.js",
+    "test:unit": "node scripts/test-unit-calculations.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },

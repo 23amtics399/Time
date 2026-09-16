@@ -1,0 +1,82 @@
+.mtc-converter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.mtc-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mtc-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mtc-select-sm {
+  width: auto;
+  min-width: 80px;
+}
+
+.mtc-display-box {
+  background: var(--bg-hover);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mtc-display-val {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.05em;
+}
+
+.mtc-phonetic {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.mtc-table-wrap {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.mtc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.mtc-table th,
+.mtc-table td {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.mtc-table th {
+  background: var(--bg-hover);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mtc-table tr:hover {
+  background: var(--bg-hover);
+}
+
+@media (max-width: 768px) {
+  .mtc-converter-grid {
+    grid-template-columns: 1fr;
+  }
+}

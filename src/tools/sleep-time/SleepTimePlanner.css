@@ -1,0 +1,55 @@
+.stp-mode-toggles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.stp-form-card {
+  margin-bottom: 2rem;
+}
+
+.stp-input-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.stp-schedules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stp-cycle-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  border-left: 4px solid var(--border-subtle);
+}
+
+.stp-cycle-card--rec {
+  border-left-color: var(--success);
+  background: hsla(142, 70%, 45%, 0.03);
+}
+
+.stp-time-display {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono, monospace);
+}
+
+.stp-disclaimer {
+  padding: 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}

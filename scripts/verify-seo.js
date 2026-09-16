@@ -105,9 +105,19 @@ async function runVerification() {
       }
     }
 
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
     // 2. Value checks
     if (titleMatches.length === 1) {
-      const extractedTitle = titleMatches[0].replace(/<\/?title>/gi, '').trim();
+      const extractedTitle = unescapeHtml(titleMatches[0].replace(/<\/?title>/gi, '').trim());
       if (extractedTitle !== route.title) {
         errors.push(`Title mismatch: "${extractedTitle}" !== "${route.title}"`);
       }
@@ -122,7 +132,7 @@ async function runVerification() {
     }
 
     if (h1Matches.length === 1) {
-      const extractedH1 = h1Matches[0].replace(/<[^>]*>/g, '').trim();
+      const extractedH1 = unescapeHtml(h1Matches[0].replace(/<[^>]*>/g, '').trim());
       if (extractedH1 !== route.h1) {
         errors.push(`H1 mismatch: "${extractedH1}" !== "${route.h1}"`);
       }
@@ -204,18 +214,16 @@ async function runVerification() {
     console.log(`${res.route.padEnd(20)}${res.status.padEnd(10)}${String(res.wordCount).padEnd(10)}${detail}`);
   }
 
-  console.log('\n' + '='.repeat(65));
+  console.log('='.repeat(65));
   if (totalErrors === 0) {
-    console.log('🎉 ALL 14 ROUTES PASSED TECHNICAL SEO & CONTENT QUALITY AUDIT!');
-    console.log('='.repeat(65));
+    console.log(`🎉 ALL ${routes.length} ROUTES PASSED TECHNICAL SEO & CONTENT QUALITY AUDIT!`);
   } else {
-    console.error(`💥 AUDIT FAILED with ${totalErrors} error(s).`);
-    console.log('='.repeat(65));
+    console.error(`❌ VERIFICATION FAILED WITH ${totalErrors} ERROR(S)`);
     process.exit(1);
   }
 }
 
-runVerification().catch(err => {
-  console.error('Verification script crashed:', err);
+runVerification().catch((err) => {
+  console.error('Fatal error during verification:', err);
   process.exit(1);
 });

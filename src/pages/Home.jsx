@@ -96,6 +96,27 @@ const TOOL_GROUPS = [
         icon: MathIcon,
         accent: 'amber',
       },
+      {
+        path: '/time-converter',
+        name: 'Time Unit Converter',
+        description: 'Convert between weeks, days, hours, minutes, seconds, and ms.',
+        icon: UnitIcon,
+        accent: 'amber',
+      },
+      {
+        path: '/military-time-converter',
+        name: 'Military Time Converter',
+        description: 'Convert between 12-hour AM/PM and 24-hour military notation.',
+        icon: MilitaryIcon,
+        accent: 'amber',
+      },
+      {
+        path: '/time-formats',
+        name: 'Time Formats',
+        description: 'Format and parse ISO 8601, RFC 2822, and Unix timestamps.',
+        icon: FormatIcon,
+        accent: 'amber',
+      },
     ],
   },
   {
@@ -114,6 +135,34 @@ const TOOL_GROUPS = [
         name: 'Meeting Planner',
         description: 'Find the best meeting time across multiple timezones.',
         icon: MeetingIcon,
+        accent: 'blue',
+      },
+      {
+        path: '/working-hours',
+        name: 'Working Hours',
+        description: 'Calculate net business hours and working days excluding weekends.',
+        icon: BriefcaseIcon,
+        accent: 'blue',
+      },
+      {
+        path: '/dst-checker',
+        name: 'DST Checker',
+        description: 'Inspect Daylight Saving Time schedules, transitions, and offsets.',
+        icon: SunMoonIcon,
+        accent: 'blue',
+      },
+      {
+        path: '/sleep-time',
+        name: 'Sleep Time Planner',
+        description: 'Plan sleep and wake schedules aligned with 90-minute sleep cycles.',
+        icon: BedIcon,
+        accent: 'blue',
+      },
+      {
+        path: '/week-number',
+        name: 'Week Number',
+        description: 'Current ISO 8601 week number, day of year, and annual progress.',
+        icon: CalendarNumberIcon,
         accent: 'blue',
       },
     ],
@@ -372,3 +421,65 @@ function MeetingIcon() {
     </svg>
   );
 }
+
+function UnitIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 7h14M15 3l4 4-4 4M19 17H5M9 13l-4 4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function MilitaryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M7 12h2M12 12h.01M15 12h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function FormatIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M7 8l-4 4 4 4M17 8l4 4-4 4M14 5l-4 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function BriefcaseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3.5" y="7.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M8.5 7.5V5a1.5 1.5 0 011.5-1.5h4A1.5 1.5 0 0115.5 5v2.5M3.5 13h17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function SunMoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function BedIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3 8v12M3 14h18v6M21 11v9M7 12a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function CalendarNumberIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M3 10.5h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M10 15h4M12 13v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+

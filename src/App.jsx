@@ -20,6 +20,13 @@ const TimeDiff      = lazy(() => import('./tools/time-diff/TimeDiff'));
 const AddSubtract   = lazy(() => import('./tools/add-subtract/AddSubtract'));
 const DateCountdown = lazy(() => import('./tools/date-countdown/DateCountdown'));
 const MeetingPlanner = lazy(() => import('./tools/meeting/MeetingPlanner'));
+const TimeUnitConverter = lazy(() => import('./tools/time-converter/TimeUnitConverter'));
+const MilitaryTimeConverter = lazy(() => import('./tools/military-time/MilitaryTimeConverter'));
+const WorkingHours = lazy(() => import('./tools/working-hours/WorkingHours'));
+const TimeFormats = lazy(() => import('./tools/time-formats/TimeFormats'));
+const DSTChecker = lazy(() => import('./tools/dst-checker/DSTChecker'));
+const SleepTimePlanner = lazy(() => import('./tools/sleep-time/SleepTimePlanner'));
+const WeekNumber = lazy(() => import('./tools/week-number/WeekNumber'));
 
 function ToolFallback() {
   return (
@@ -58,6 +65,13 @@ export default function App() {
                 <Route path="/add-subtract"  element={<AddSubtract />} />
                 <Route path="/date-countdown" element={<DateCountdown />} />
                 <Route path="/meeting"       element={<MeetingPlanner />} />
+                <Route path="/time-converter" element={<TimeUnitConverter />} />
+                <Route path="/military-time-converter" element={<MilitaryTimeConverter />} />
+                <Route path="/working-hours" element={<WorkingHours />} />
+                <Route path="/time-formats"  element={<TimeFormats />} />
+                <Route path="/dst-checker"   element={<DSTChecker />} />
+                <Route path="/sleep-time"    element={<SleepTimePlanner />} />
+                <Route path="/week-number"   element={<WeekNumber />} />
                 {/* 404 fallback */}
                 <Route path="*"              element={<NotFound />} />
               </Routes>

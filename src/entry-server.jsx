@@ -15,6 +15,13 @@ import TimeDiff from './tools/time-diff/TimeDiff';
 import AddSubtract from './tools/add-subtract/AddSubtract';
 import DateCountdown from './tools/date-countdown/DateCountdown';
 import MeetingPlanner from './tools/meeting/MeetingPlanner';
+import TimeUnitConverter from './tools/time-converter/TimeUnitConverter';
+import MilitaryTimeConverter from './tools/military-time/MilitaryTimeConverter';
+import WorkingHours from './tools/working-hours/WorkingHours';
+import TimeFormats from './tools/time-formats/TimeFormats';
+import DSTChecker from './tools/dst-checker/DSTChecker';
+import SleepTimePlanner from './tools/sleep-time/SleepTimePlanner';
+import WeekNumber from './tools/week-number/WeekNumber';
 import { TimeProvider } from './contexts/TimeContext';
 import { AlarmProvider } from './contexts/AlarmContext';
 import { TimerProvider } from './contexts/TimerContext';
@@ -41,6 +48,13 @@ export function render(url) {
                 <Route path="/add-subtract" element={<AddSubtract />} />
                 <Route path="/date-countdown" element={<DateCountdown />} />
                 <Route path="/meeting" element={<MeetingPlanner />} />
+                <Route path="/time-converter" element={<TimeUnitConverter />} />
+                <Route path="/military-time-converter" element={<MilitaryTimeConverter />} />
+                <Route path="/working-hours" element={<WorkingHours />} />
+                <Route path="/time-formats" element={<TimeFormats />} />
+                <Route path="/dst-checker" element={<DSTChecker />} />
+                <Route path="/sleep-time" element={<SleepTimePlanner />} />
+                <Route path="/week-number" element={<WeekNumber />} />
               </Routes>
             </Layout>
           </MemoryRouter>

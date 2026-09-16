@@ -109,14 +109,24 @@ async function runLocalHttpCheck() {
     if (h1Matches.length !== 1) errors.push(`H1: ${h1Matches.length}`);
     if (jsonLdMatches.length !== 1) errors.push(`JSON-LD: ${jsonLdMatches.length}`);
 
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
     // Verify H1 value
-    const h1Text = h1Matches[0] ? h1Matches[0].replace(/<[^>]*>/g, '').trim() : '';
+    const h1Text = h1Matches[0] ? unescapeHtml(h1Matches[0].replace(/<[^>]*>/g, '').trim()) : '';
     if (h1Text !== route.h1) {
       errors.push(`H1 text: "${h1Text}" !== "${route.h1}"`);
     }
 
     // Verify Title value
-    const titleText = titleMatches[0] ? titleMatches[0].replace(/<\/?title>/gi, '').trim() : '';
+    const titleText = titleMatches[0] ? unescapeHtml(titleMatches[0].replace(/<\/?title>/gi, '').trim()) : '';
     if (titleText !== route.title) {
       errors.push(`Title text mismatch: "${titleText}" !== "${route.title}"`);
     }
@@ -148,7 +158,7 @@ async function runLocalHttpCheck() {
   server.close();
   console.log('\n' + '='.repeat(65));
   if (failures === 0) {
-    console.log('🎉 LOCAL RAW HTTP CHECKS PASSED FOR ALL 14 ROUTES!');
+    console.log(`🎉 LOCAL RAW HTTP CHECKS PASSED FOR ALL ${routes.length} ROUTES!\n`);
   } else {
     console.error(`💥 ${failures} route(s) failed raw HTTP check.`);
     process.exit(1);

@@ -63,8 +63,18 @@ async function verifyProduction() {
         errors.push(`Canonical mismatch: "${canonicalHref}" !== "${route.canonical}"`);
       }
 
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
       // Verify H1 text
-      const h1Text = h1Matches[0] ? h1Matches[0].replace(/<[^>]*>/g, '').trim() : '';
+      const h1Text = h1Matches[0] ? unescapeHtml(h1Matches[0].replace(/<[^>]*>/g, '').trim()) : '';
       if (h1Text !== route.h1) {
         errors.push(`H1 mismatch: "${h1Text}" !== "${route.h1}"`);
       }
@@ -100,7 +110,7 @@ async function verifyProduction() {
 
   console.log('\n' + '='.repeat(65));
   if (totalErrors === 0) {
-    console.log('🎉 PRODUCTION VERIFICATION PASSED FOR ALL 14 ROUTES!');
+    console.log(`🎉 PRODUCTION VERIFICATION PASSED FOR ALL ${routes.length} ROUTES!`);
   } else {
     console.warn(`⚠️ PRODUCTION VERIFICATION completed with ${totalErrors} issue(s). Deployment might still be propagating.`);
   }

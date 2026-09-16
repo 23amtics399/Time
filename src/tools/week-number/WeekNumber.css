@@ -1,0 +1,74 @@
+.wn-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.wn-hero-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+}
+
+.wn-hero-num {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  font-family: var(--font-mono, monospace);
+}
+
+.wn-progress-wrap {
+  margin-top: 1rem;
+}
+
+.wn-progress-bar-bg {
+  height: 10px;
+  background: var(--bg-hover);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.wn-progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.wn-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.wn-metric-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.wn-lookup-card {
+  margin-bottom: 2rem;
+}
+
+.wn-lookup-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .wn-hero-grid {
+    grid-template-columns: 1fr;
+  }
+}

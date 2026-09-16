@@ -1,0 +1,77 @@
+.dst-header-card {
+  margin-bottom: 2rem;
+}
+
+.dst-tz-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.dst-tz-select-group {
+  flex: 2;
+  min-width: 240px;
+}
+
+.dst-year-select-group {
+  flex: 1;
+  min-width: 120px;
+}
+
+.dst-status-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.5rem;
+}
+
+.dst-status-banner--active {
+  background: hsla(142, 70%, 45%, 0.1);
+  border: 1px solid var(--success);
+}
+
+.dst-status-banner--none {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+}
+
+.dst-status-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.dst-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.dst-detail-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dst-transition-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.dst-transition-table th,
+.dst-transition-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dst-transition-table th {
+  background: var(--bg-hover);
+  font-weight: 600;
+}
