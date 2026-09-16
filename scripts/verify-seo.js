@@ -72,6 +72,17 @@ async function runVerification() {
       errors.push(`og:site_name count is ${ogSiteNameMatches.length} (expected 1)`);
     }
 
+    const ogImageMatches = html.match(/<meta\s+[^>]*property=["']og:image["'][^>]*>/gi) || [];
+    if (ogImageMatches.length !== 1) {
+      errors.push(`og:image count is ${ogImageMatches.length} (expected 1)`);
+    } else {
+      const contentMatch = ogImageMatches[0].match(/content=["']([^"']*)["']/i);
+      const extractedOgImage = contentMatch ? contentMatch[1] : '';
+      if (extractedOgImage !== route.og.image) {
+        errors.push(`og:image mismatch: "${extractedOgImage}" !== "${route.og.image}"`);
+      }
+    }
+
     const twCardMatches = html.match(/<meta\s+[^>]*name=["']twitter:card["'][^>]*>/gi) || [];
     if (twCardMatches.length !== 1) {
       errors.push(`twitter:card count is ${twCardMatches.length} (expected 1)`);
@@ -85,6 +96,17 @@ async function runVerification() {
     const twDescMatches = html.match(/<meta\s+[^>]*name=["']twitter:description["'][^>]*>/gi) || [];
     if (twDescMatches.length !== 1) {
       errors.push(`twitter:description count is ${twDescMatches.length} (expected 1)`);
+    }
+
+    const twImageMatches = html.match(/<meta\s+[^>]*name=["']twitter:image["'][^>]*>/gi) || [];
+    if (twImageMatches.length !== 1) {
+      errors.push(`twitter:image count is ${twImageMatches.length} (expected 1)`);
+    } else {
+      const contentMatch = twImageMatches[0].match(/content=["']([^"']*)["']/i);
+      const extractedTwImage = contentMatch ? contentMatch[1] : '';
+      if (extractedTwImage !== route.twitter.image) {
+        errors.push(`twitter:image mismatch: "${extractedTwImage}" !== "${route.twitter.image}"`);
+      }
     }
 
     const h1Matches = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || [];
@@ -205,6 +227,48 @@ function unescapeHtml(str) {
   } else {
     console.warn(`⚠️ robots.txt not found in dist/`);
   }
+
+  // Check Static Assets in dist/
+  const requiredAssets = [
+    'favicon.svg',
+    'favicon-16x16.png',
+    'favicon-32x32.png',
+    'apple-touch-icon.png',
+    'icon-192.png',
+    'icon-512.png',
+    'manifest.webmanifest',
+    'og-image.png',
+    'twitter-card.png',
+    'icons/clock.svg',
+    'icons/analog-clock.svg',
+    'icons/world-clock.svg',
+    'icons/stopwatch.svg',
+    'icons/countdown.svg',
+    'icons/pomodoro.svg',
+    'icons/alarm.svg',
+    'icons/unix.svg',
+    'icons/timezone.svg',
+    'icons/time-diff.svg',
+    'icons/add-subtract.svg',
+    'icons/time-converter.svg',
+    'icons/military-time.svg',
+    'icons/working-hours.svg',
+    'icons/time-formats.svg',
+    'icons/date-countdown.svg',
+    'icons/meeting.svg',
+    'icons/dst-checker.svg',
+    'icons/sleep-time.svg',
+    'icons/week-number.svg',
+  ];
+
+  for (const relPath of requiredAssets) {
+    const fullPath = path.resolve(distDir, relPath);
+    if (!fs.existsSync(fullPath)) {
+      console.error(`❌ Static asset missing in dist/: ${relPath}`);
+      totalErrors++;
+    }
+  }
+
 
   // Print Summary Table
   console.log('ROUTE'.padEnd(20) + 'STATUS'.padEnd(10) + 'WORDS'.padEnd(10) + 'DETAILS');

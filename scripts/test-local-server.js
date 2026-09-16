@@ -14,7 +14,9 @@ const MIME_TYPES = {
   '.json': 'application/json',
   '.xml': 'application/xml',
   '.txt': 'text/plain',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.webmanifest': 'application/manifest+json',
 };
 
 function serveDist() {
@@ -88,9 +90,11 @@ async function runLocalHttpCheck() {
     const ogUrlMatches = html.match(/<meta\s+[^>]*property=["']og:url["'][^>]*>/gi) || [];
     const ogTypeMatches = html.match(/<meta\s+[^>]*property=["']og:type["'][^>]*>/gi) || [];
     const ogSiteMatches = html.match(/<meta\s+[^>]*property=["']og:site_name["'][^>]*>/gi) || [];
+    const ogImageMatches = html.match(/<meta\s+[^>]*property=["']og:image["'][^>]*>/gi) || [];
     const twCardMatches = html.match(/<meta\s+[^>]*name=["']twitter:card["'][^>]*>/gi) || [];
     const twTitleMatches = html.match(/<meta\s+[^>]*name=["']twitter:title["'][^>]*>/gi) || [];
     const twDescMatches = html.match(/<meta\s+[^>]*name=["']twitter:description["'][^>]*>/gi) || [];
+    const twImageMatches = html.match(/<meta\s+[^>]*name=["']twitter:image["'][^>]*>/gi) || [];
     const h1Matches = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || [];
     const jsonLdMatches = html.match(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
 
@@ -103,9 +107,11 @@ async function runLocalHttpCheck() {
     if (ogUrlMatches.length !== 1) errors.push(`og:url: ${ogUrlMatches.length}`);
     if (ogTypeMatches.length !== 1) errors.push(`og:type: ${ogTypeMatches.length}`);
     if (ogSiteMatches.length !== 1) errors.push(`og:site_name: ${ogSiteMatches.length}`);
+    if (ogImageMatches.length !== 1) errors.push(`og:image: ${ogImageMatches.length}`);
     if (twCardMatches.length !== 1) errors.push(`twitter:card: ${twCardMatches.length}`);
     if (twTitleMatches.length !== 1) errors.push(`twitter:title: ${twTitleMatches.length}`);
     if (twDescMatches.length !== 1) errors.push(`twitter:description: ${twDescMatches.length}`);
+    if (twImageMatches.length !== 1) errors.push(`twitter:image: ${twImageMatches.length}`);
     if (h1Matches.length !== 1) errors.push(`H1: ${h1Matches.length}`);
     if (jsonLdMatches.length !== 1) errors.push(`JSON-LD: ${jsonLdMatches.length}`);
 
@@ -151,7 +157,52 @@ function unescapeHtml(str) {
       console.error(`❌ [${route.path}] ${errors.join(', ')}`);
       failures++;
     } else {
-      console.log(`✅ [${route.path}] 200 OK | H1: "${h1Text}" | Canonical: ${canonicalHref} | All 13 tags === 1`);
+      console.log(`✅ [${route.path}] 200 OK | H1: "${h1Text}" | Canonical: ${canonicalHref} | All 15 tags === 1`);
+    }
+  }
+
+  // Verify Static Asset HTTP Endpoints
+  console.log('\n📦 Verifying Static Asset HTTP responses...');
+  const staticAssets = [
+    '/favicon.svg',
+    '/favicon-16x16.png',
+    '/favicon-32x32.png',
+    '/apple-touch-icon.png',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/manifest.webmanifest',
+    '/og-image.png',
+    '/twitter-card.png',
+    '/icons/clock.svg',
+    '/icons/analog-clock.svg',
+    '/icons/world-clock.svg',
+    '/icons/stopwatch.svg',
+    '/icons/countdown.svg',
+    '/icons/pomodoro.svg',
+    '/icons/alarm.svg',
+    '/icons/unix.svg',
+    '/icons/timezone.svg',
+    '/icons/time-diff.svg',
+    '/icons/add-subtract.svg',
+    '/icons/time-converter.svg',
+    '/icons/military-time.svg',
+    '/icons/working-hours.svg',
+    '/icons/time-formats.svg',
+    '/icons/date-countdown.svg',
+    '/icons/meeting.svg',
+    '/icons/dst-checker.svg',
+    '/icons/sleep-time.svg',
+    '/icons/week-number.svg',
+  ];
+
+  for (const asset of staticAssets) {
+    const assetUrl = `http://127.0.0.1:4173${asset}`;
+    const res = await fetch(assetUrl);
+    if (res.status === 200) {
+      console.log(`   ✅ [200 OK] ${asset} (${res.headers.get('content-type')})`);
+    } else {
+      console.error(`   ❌ [${res.status}] ${asset}`);
+      failures++;
     }
   }
 

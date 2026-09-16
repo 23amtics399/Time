@@ -79,10 +79,15 @@ async function prerender() {
         `<meta property="og:url" content="${config.og?.url || config.canonical}" />`,
         `<meta property="og:type" content="${config.og?.type || 'website'}" />`,
         `<meta property="og:site_name" content="${config.og?.siteName || SITE_NAME}" />`,
+        `<meta property="og:image" content="${config.og?.image || 'https://time.sji.one/og-image.png'}" />`,
+        `<meta property="og:image:width" content="1200" />`,
+        `<meta property="og:image:height" content="630" />`,
+        `<meta property="og:image:alt" content="${escapeHtml(config.title)}" />`,
         `<!-- Twitter -->`,
         `<meta name="twitter:card" content="${config.twitter?.card || 'summary_large_image'}" />`,
         `<meta name="twitter:title" content="${escapeHtml(config.twitter?.title || config.title)}" />`,
         `<meta name="twitter:description" content="${escapeHtml(config.twitter?.description || config.description)}" />`,
+        `<meta name="twitter:image" content="${config.twitter?.image || config.og?.image || 'https://time.sji.one/og-image.png'}" />`,
       ];
 
       if (config.jsonLd) {

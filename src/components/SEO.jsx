@@ -79,11 +79,13 @@ export default function SEO({ path = '/', title, description, jsonLd }) {
     setHeadTag('meta[property="og:url"]', 'meta', { property: 'og:url' }, 'content', resolvedOg.url || resolvedCanonical);
     setHeadTag('meta[property="og:type"]', 'meta', { property: 'og:type' }, 'content', resolvedOg.type || 'website');
     setHeadTag('meta[property="og:site_name"]', 'meta', { property: 'og:site_name' }, 'content', resolvedOg.siteName || SITE_NAME);
+    setHeadTag('meta[property="og:image"]', 'meta', { property: 'og:image' }, 'content', resolvedOg.image || `${BASE_URL}/og-image.png`);
 
     // 5. Twitter Card
     setHeadTag('meta[name="twitter:card"]', 'meta', { name: 'twitter:card' }, 'content', resolvedTwitter.card || 'summary_large_image');
     setHeadTag('meta[name="twitter:title"]', 'meta', { name: 'twitter:title' }, 'content', resolvedTwitter.title || resolvedTitle);
     setHeadTag('meta[name="twitter:description"]', 'meta', { name: 'twitter:description' }, 'content', resolvedTwitter.description || resolvedDescription);
+    setHeadTag('meta[name="twitter:image"]', 'meta', { name: 'twitter:image' }, 'content', resolvedTwitter.image || resolvedOg.image || `${BASE_URL}/og-image.png`);
 
     // 6. JSON-LD structured data
     if (resolvedJsonLd) {
