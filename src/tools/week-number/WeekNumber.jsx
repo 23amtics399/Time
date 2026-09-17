@@ -1,16 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { getISOWeekDetails, toDateInput } from '../../utils/time';
+import ShareButton from '../../components/ShareButton';
+import CopyButton from '../../components/CopyButton';
 import './WeekNumber.css';
 
 export default function WeekNumber() {
+  const [searchParams] = useSearchParams();
   const today = new Date();
   const todayDetails = getISOWeekDetails(today);
 
   const [lookupDateStr, setLookupDateStr] = useState(toDateInput(today));
+
+  useEffect(() => {
+    const qDate = searchParams.get('date');
+    if (qDate && /^\d{4}-\d{2}-\d{2}$/.test(qDate)) {
+      setLookupDateStr(qDate);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const lookupDetails = lookupDateStr ? getISOWeekDetails(new Date(lookupDateStr)) : null;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/week-number?date=${encodeURIComponent(lookupDateStr)}`
+    : `https://time.sji.one/week-number?date=${encodeURIComponent(lookupDateStr)}`;
+
+  const copyText = useMemo(() => {
+    if (!lookupDetails) return '';
+    return `Date: ${lookupDateStr}\nISO Week: Week ${lookupDetails.weekNumber} (${lookupDetails.isoWeekDate})\nDay of Year: ${lookupDetails.dayOfYear} of ${lookupDetails.daysInYear}\nQuarter: Q${lookupDetails.quarter}`;
+  }, [lookupDetails, lookupDateStr]);
 
   return (
     <>
@@ -94,34 +115,54 @@ export default function WeekNumber() {
                 onChange={e => setLookupDateStr(e.target.value)}
               />
             </div>
+            <div style={{ alignSelf: 'flex-end', display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setLookupDateStr(toDateInput(today))}
+              >
+                Today
+              </button>
+              <ShareButton
+                url={shareUrl}
+                title={`Week Number for ${lookupDateStr}`}
+                text={`ISO Week number lookup for ${lookupDateStr}`}
+              />
+              {lookupDetails && (
+                <CopyButton
+                  text={copyText}
+                  label="Copy details"
+                  ariaLabel="Copy week number details"
+                />
+              )}
+            </div>
           </div>
 
           {lookupDetails && (
             <div className="wn-metrics-grid" style={{ marginTop: '1.25rem', marginBottom: '0' }}>
-              <div className="card wn-metric-card" style={{ background: 'var(--bg-hover)' }}>
-                <span className="text-xs text-muted font-semibold uppercase">ISO Week Number</span>
-                <span className="text-xl font-bold font-mono" style={{ color: 'var(--accent)' }}>Week {lookupDetails.weekNumber}</span>
-                <span className="text-xs text-muted">Year {lookupDetails.isoYear}</span>
+              <div className="card wn-metric-card">
+                <span className="text-xs text-muted font-semibold uppercase">ISO Week</span>
+                <span className="text-2xl font-bold font-mono" style={{ color: 'var(--accent)' }}>Week {lookupDetails.weekNumber}</span>
+                <span className="text-xs text-muted">{lookupDetails.isoWeekDate}</span>
               </div>
 
-              <div className="card wn-metric-card" style={{ background: 'var(--bg-hover)' }}>
-                <span className="text-xs text-muted font-semibold uppercase">Week Span</span>
-                <span className="text-sm font-semibold">
+              <div className="card wn-metric-card">
+                <span className="text-xs text-muted font-semibold uppercase">Day of Year</span>
+                <span className="text-2xl font-bold font-mono">{lookupDetails.dayOfYear}</span>
+                <span className="text-xs text-muted">of {lookupDetails.daysInYear}</span>
+              </div>
+
+              <div className="card wn-metric-card">
+                <span className="text-xs text-muted font-semibold uppercase">Quarter</span>
+                <span className="text-2xl font-bold font-mono">Q{lookupDetails.quarter}</span>
+                <span className="text-xs text-muted">{lookupDetails.weekStart.getFullYear()}</span>
+              </div>
+
+              <div className="card wn-metric-card">
+                <span className="text-xs text-muted font-semibold uppercase">Week Range</span>
+                <span className="text-xs text-muted" style={{ marginTop: '0.5rem', lineHeight: '1.4' }}>
                   {lookupDetails.weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – {lookupDetails.weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
-                <span className="text-xs text-muted">Mon to Sun</span>
-              </div>
-
-              <div className="card wn-metric-card" style={{ background: 'var(--bg-hover)' }}>
-                <span className="text-xs text-muted font-semibold uppercase">Quarter</span>
-                <span className="text-xl font-bold font-mono">Q{lookupDetails.quarter}</span>
-                <span className="text-xs text-muted">Day {lookupDetails.dayOfYear} of {lookupDetails.daysInYear}</span>
-              </div>
-
-              <div className="card wn-metric-card" style={{ background: 'var(--bg-hover)' }}>
-                <span className="text-xs text-muted font-semibold uppercase">ISO Week Date</span>
-                <span className="text-sm font-mono font-bold">{lookupDetails.isoWeekDate}</span>
-                <span className="text-xs text-muted">Day {lookupDetails.isoDay} of week</span>
               </div>
             </div>
           )}

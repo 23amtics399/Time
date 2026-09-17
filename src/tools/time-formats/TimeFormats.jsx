@@ -1,19 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { getMachineTimeFormats, parseMachineDateInput } from '../../utils/time';
+import { useToast } from '../../contexts/ToastContext';
+import ShareButton from '../../components/ShareButton';
 import './TimeFormats.css';
 
 export default function TimeFormats() {
+  const [searchParams] = useSearchParams();
+  const { showToast } = useToast();
   const now = useNow(true, 'second');
   const liveFormats = getMachineTimeFormats(now);
 
   const [parseInput, setParseInput] = useState('');
   const [parseResult, setParseResult] = useState(null);
   const [parseError, setParseError] = useState('');
-  const [copiedKey, setCopiedKey] = useState('');
+
+  // Read query params on mount
+  useEffect(() => {
+    const qVal = searchParams.get('val');
+    if (qVal) {
+      setParseInput(qVal);
+      const res = parseMachineDateInput(qVal);
+      if (res?.error) {
+        setParseError(res.error);
+      } else {
+        setParseResult(res);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleParse() {
     setParseError('');
@@ -27,17 +45,21 @@ export default function TimeFormats() {
       setParseResult(null);
     } else {
       setParseResult(res);
+      showToast('Timestamp parsed');
     }
   }
 
-  function copy(text, key) {
+  function copy(text, label) {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(String(text)).then(() => {
-        setCopiedKey(key);
-        setTimeout(() => setCopiedKey(''), 2000);
+        showToast(`Copied ${label}`);
       });
     }
   }
+
+  const shareUrl = typeof window !== 'undefined' && parseInput.trim()
+    ? `${window.location.origin}/time-formats?val=${encodeURIComponent(parseInput.trim())}`
+    : `https://time.sji.one/time-formats`;
 
   return (
     <>
@@ -63,8 +85,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">ISO 8601 (UTC / Zulu)</span>
                   <span className="tf-format-val">{liveFormats.isoUtc}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.isoUtc, 'live-iso')}>
-                  {copiedKey === 'live-iso' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.isoUtc, 'ISO 8601 UTC')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -73,8 +99,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">ISO 8601 (Local with Offset)</span>
                   <span className="tf-format-val">{liveFormats.localIso}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.localIso, 'live-local-iso')}>
-                  {copiedKey === 'live-local-iso' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.localIso, 'Local ISO')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -83,8 +113,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">RFC 2822 / HTTP Header Date</span>
                   <span className="tf-format-val">{liveFormats.rfc2822}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.rfc2822, 'live-rfc')}>
-                  {copiedKey === 'live-rfc' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.rfc2822, 'RFC 2822')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -93,8 +127,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">Unix Timestamp (Seconds)</span>
                   <span className="tf-format-val">{liveFormats.unixSeconds}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.unixSeconds, 'live-sec')}>
-                  {copiedKey === 'live-sec' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.unixSeconds, 'Unix Seconds')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -103,8 +141,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">Unix Timestamp (Milliseconds)</span>
                   <span className="tf-format-val">{liveFormats.unixMilliseconds}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.unixMilliseconds, 'live-ms')}>
-                  {copiedKey === 'live-ms' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.unixMilliseconds, 'Unix Milliseconds')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -113,8 +155,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">Local Timezone Offset</span>
                   <span className="tf-format-val">{liveFormats.timezoneOffset}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(liveFormats.timezoneOffset, 'live-offset')}>
-                  {copiedKey === 'live-offset' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(liveFormats.timezoneOffset, 'Offset')}
+                >
+                  Copy
                 </button>
               </div>
             </div>
@@ -134,8 +180,16 @@ export default function TimeFormats() {
               onChange={e => setParseInput(e.target.value)}
               placeholder="e.g. 2026-09-16T11:41:00Z, 1789558860, or Wed, 16 Sep 2026 11:41:00 GMT"
               aria-label="Timestamp or ISO String to parse"
+              onKeyDown={e => e.key === 'Enter' && handleParse()}
             />
-            <button className="btn btn-primary" onClick={handleParse}>Parse</button>
+            <button type="button" className="btn btn-primary" onClick={handleParse}>Parse</button>
+            {parseInput.trim() && (
+              <ShareButton
+                url={shareUrl}
+                title="ISO & Timestamp Parse"
+                text={`Parsed timestamp format: ${parseInput}`}
+              />
+            )}
           </div>
 
           {parseError && <div className="tf-error">{parseError}</div>}
@@ -154,8 +208,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">UTC (ISO 8601)</span>
                   <span className="tf-format-val">{parseResult.formats.isoUtc}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(parseResult.formats.isoUtc, 'parsed-iso')}>
-                  {copiedKey === 'parsed-iso' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(parseResult.formats.isoUtc, 'UTC ISO')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -164,8 +222,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">Local Date &amp; Time</span>
                   <span className="tf-format-val">{parseResult.formats.localFull}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(parseResult.formats.localFull, 'parsed-local')}>
-                  {copiedKey === 'parsed-local' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(parseResult.formats.localFull, 'Local Date')}
+                >
+                  Copy
                 </button>
               </div>
 
@@ -174,8 +236,12 @@ export default function TimeFormats() {
                   <span className="tf-format-name">Unix Seconds</span>
                   <span className="tf-format-val">{parseResult.formats.unixSeconds}</span>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => copy(parseResult.formats.unixSeconds, 'parsed-sec')}>
-                  {copiedKey === 'parsed-sec' ? 'Copied!' : 'Copy'}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => copy(parseResult.formats.unixSeconds, 'Unix Seconds')}
+                >
+                  Copy
                 </button>
               </div>
             </div>

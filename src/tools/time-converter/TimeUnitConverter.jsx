@@ -1,28 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { convertTimeUnits, TIME_UNIT_LABELS } from '../../utils/time';
+import { useToast } from '../../contexts/ToastContext';
+import CopyButton from '../../components/CopyButton';
+import ShareButton from '../../components/ShareButton';
 import './TimeUnitConverter.css';
 
 const UNITS = ['weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds', 'microseconds'];
 
 export default function TimeUnitConverter() {
+  const [searchParams] = useSearchParams();
+  const { showToast } = useToast();
   const [inputValue, setInputValue] = useState('1');
   const [sourceUnit, setSourceUnit] = useLocalStorage('tuc-source-unit', 'hours');
-  const [copiedKey, setCopiedKey] = useState('');
+
+  // Read query params on mount
+  useEffect(() => {
+    const qVal = searchParams.get('val');
+    const qFrom = searchParams.get('from');
+    if (qVal) setInputValue(qVal);
+    if (qFrom && UNITS.includes(qFrom)) setSourceUnit(qFrom);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const results = convertTimeUnits(inputValue, sourceUnit);
 
-  function copy(text, key) {
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(String(text)).then(() => {
-        setCopiedKey(key);
-        setTimeout(() => setCopiedKey(''), 2000);
-      });
-    }
-  }
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/time-converter?val=${encodeURIComponent(inputValue)}&from=${encodeURIComponent(sourceUnit)}`
+    : `https://time.sji.one/time-converter?val=${encodeURIComponent(inputValue)}&from=${encodeURIComponent(sourceUnit)}`;
 
   return (
     <>
@@ -64,6 +72,21 @@ export default function TimeUnitConverter() {
             </div>
           </div>
 
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <ShareButton
+              url={shareUrl}
+              title={`Convert ${inputValue} ${TIME_UNIT_LABELS[sourceUnit]}`}
+              text={`Conversion for ${inputValue} ${TIME_UNIT_LABELS[sourceUnit]} on Time Tools`}
+            />
+            {results?.compoundText && (
+              <CopyButton
+                text={`${inputValue} ${TIME_UNIT_LABELS[sourceUnit]} = ${results.compoundText}`}
+                label="Copy breakdown"
+                ariaLabel="Copy duration breakdown"
+              />
+            )}
+          </div>
+
           {results && (
             <div className="tuc-compound-card">
               <div className="tuc-compound-title">Compound Duration Breakdown</div>
@@ -84,11 +107,18 @@ export default function TimeUnitConverter() {
                     <span className="tuc-unit-val" title={val}>{val}</span>
                   </div>
                   <button
+                    type="button"
                     className="btn btn-secondary btn-sm"
-                    onClick={() => copy(val, unit)}
+                    onClick={() => {
+                      if (navigator?.clipboard) {
+                        navigator.clipboard.writeText(String(val)).then(() => {
+                          showToast(`Copied ${TIME_UNIT_LABELS[unit]}`);
+                        });
+                      }
+                    }}
                     aria-label={`Copy ${TIME_UNIT_LABELS[unit]} value`}
                   >
-                    {copiedKey === unit ? 'Copied!' : 'Copy'}
+                    Copy
                   </button>
                 </div>
               );

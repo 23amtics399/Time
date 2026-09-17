@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { calculateWorkingHours, toDatetimeLocal } from '../../utils/time';
+import ShareButton from '../../components/ShareButton';
+import CopyButton from '../../components/CopyButton';
 import './WorkingHours.css';
 
 const DAYS_MAP = [
@@ -17,6 +20,8 @@ const DAYS_MAP = [
 ];
 
 export default function WorkingHours() {
+  const [searchParams] = useSearchParams();
+
   const now = new Date();
   const defaultStart = new Date(now);
   defaultStart.setHours(9, 0, 0, 0);
@@ -32,6 +37,17 @@ export default function WorkingHours() {
   const [workEnd, setWorkEnd] = useLocalStorage('wh-end', '17:00');
   const [breakMinutes, setBreakMinutes] = useLocalStorage('wh-break', 60);
   const [workDays, setWorkDays] = useLocalStorage('wh-days', [1, 2, 3, 4, 5]);
+
+  useEffect(() => {
+    const qStart = searchParams.get('start');
+    const qEnd = searchParams.get('end');
+    const qWStart = searchParams.get('shiftStart');
+    const qWEnd = searchParams.get('shiftEnd');
+    if (qStart) setStart(qStart);
+    if (qEnd) setEnd(qEnd);
+    if (qWStart) setWorkStart(qWStart);
+    if (qWEnd) setWorkEnd(qWEnd);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function toggleDay(dayId) {
     if (workDays.includes(dayId)) {
@@ -51,6 +67,15 @@ export default function WorkingHours() {
     workDays,
     breakMinutes: Number(breakMinutes) || 0,
   });
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/working-hours?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&shiftStart=${encodeURIComponent(workStart)}&shiftEnd=${encodeURIComponent(workEnd)}`
+    : `https://time.sji.one/working-hours?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+
+  const copyResultText = useMemo(() => {
+    if (!results || results.error) return '';
+    return `Working Hours Calculation (${start} to ${end}):\nNet Work Hours: ${results.workHours}h ${results.workMinutesRem}m (${results.workHoursDecimal}h)\nBusiness Days: ${results.workDaysActive} days\nTotal Elapsed: ${results.totalCalendarHours}h`;
+  }, [results, start, end]);
 
   return (
     <>
@@ -142,6 +167,21 @@ export default function WorkingHours() {
                 })}
               </div>
             </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.75rem' }}>
+            <ShareButton
+              url={shareUrl}
+              title="Working Hours Calculation"
+              text={`Working hours from ${start} to ${end}`}
+            />
+            {results && !results.error && (
+              <CopyButton
+                text={copyResultText}
+                label="Copy hours"
+                ariaLabel="Copy working hours result"
+              />
+            )}
           </div>
         </div>
 

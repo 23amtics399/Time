@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { convert12To24, convert24To12, pad } from '../../utils/time';
+import ShareButton from '../../components/ShareButton';
+import CopyButton from '../../components/CopyButton';
 import './MilitaryTimeConverter.css';
 
 const REFERENCE_HOURS = Array.from({ length: 24 }, (_, i) => {
@@ -17,6 +20,8 @@ const REFERENCE_HOURS = Array.from({ length: 24 }, (_, i) => {
 });
 
 export default function MilitaryTimeConverter() {
+  const [searchParams] = useSearchParams();
+
   // 12-hour state
   const [h12, setH12] = useState('08');
   const [m12, setM12] = useState('30');
@@ -25,11 +30,32 @@ export default function MilitaryTimeConverter() {
   // 24-hour state
   const [time24Input, setTime24Input] = useState('20:45');
 
+  useEffect(() => {
+    const qTime = searchParams.get('time');
+    if (qTime && /^\d{1,2}:\d{2}$/.test(qTime)) {
+      setTime24Input(qTime);
+      const [h, m] = qTime.split(':').map(Number);
+      if (h < 12) {
+        setH12(String(h === 0 ? 12 : h).padStart(2, '0'));
+        setM12(String(m).padStart(2, '0'));
+        setAmpm('AM');
+      } else {
+        setH12(String(h === 12 ? 12 : h - 12).padStart(2, '0'));
+        setM12(String(m).padStart(2, '0'));
+        setAmpm('PM');
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Converted results
   const resFrom12 = convert12To24(h12, m12, ampm);
 
   const [h24Part, m24Part] = time24Input.split(':').map(Number);
   const resFrom24 = !isNaN(h24Part) && !isNaN(m24Part) ? convert24To12(h24Part, m24Part) : null;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/military-time-converter?time=${encodeURIComponent(time24Input)}`
+    : `https://time.sji.one/military-time-converter?time=${encodeURIComponent(time24Input)}`;
 
   return (
     <>
@@ -91,6 +117,13 @@ export default function MilitaryTimeConverter() {
                 <div className="mtc-phonetic">
                   Spoken: &ldquo;{resFrom12.pronunciation}&rdquo;
                 </div>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <CopyButton
+                    text={`${resFrom12.militaryTime} (${resFrom12.time24})`}
+                    label="Copy military time"
+                    ariaLabel="Copy military time"
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -104,55 +137,79 @@ export default function MilitaryTimeConverter() {
                 className="input"
                 value={time24Input}
                 onChange={e => setTime24Input(e.target.value)}
-                aria-label="24-Hour Time Input"
+                aria-label="24-Hour Input"
               />
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => {
+                  const now = new Date();
+                  setTime24Input(`${pad(now.getHours())}:${pad(now.getMinutes())}`);
+                }}
+              >
+                Now
+              </button>
             </div>
 
             {resFrom24 && (
               <div className="mtc-display-box">
                 <div>
-                  <span className="text-xs text-muted uppercase font-semibold">Standard 12-Hour Time</span>
-                  <div className="mtc-display-val">{resFrom24.time12}</div>
+                  <span className="text-xs text-muted uppercase font-semibold">Standard 12-Hour</span>
+                  <div className="mtc-display-val" style={{ color: 'var(--accent)' }}>{resFrom24.time12}</div>
                 </div>
                 <div>
-                  <span className="text-xs text-muted uppercase font-semibold">Military Representation</span>
-                  <div className="mtc-display-val" style={{ color: 'var(--success)' }}>{resFrom24.militaryTime} hours</div>
+                  <span className="text-xs text-muted uppercase font-semibold">Military Time</span>
+                  <div className="mtc-display-val">{resFrom24.military} hours</div>
                 </div>
                 <div className="mtc-phonetic">
                   Spoken: &ldquo;{resFrom24.pronunciation}&rdquo;
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <ShareButton
+                    url={shareUrl}
+                    title="Military Time Conversion"
+                    text={`${time24Input} in military time is ${resFrom24.military} hours (${resFrom24.time12})`}
+                  />
+                  <CopyButton
+                    text={`${resFrom24.time12} (${resFrom24.military} hours)`}
+                    label="Copy 12-hour"
+                    ariaLabel="Copy 12-hour time"
+                  />
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* 24-Hour Reference Table */}
-        <div className="card mtc-table-wrap">
-          <h2 className="text-lg font-semibold" style={{ marginBottom: '1rem' }}>24-Hour &amp; Military Time Conversion Chart</h2>
-          <table className="mtc-table" aria-label="Military time conversion chart">
-            <thead>
-              <tr>
-                <th>12-Hour Standard</th>
-                <th>24-Hour Format</th>
-                <th>Military Notation</th>
-                <th>Spoken Pronunciation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {REFERENCE_HOURS.map(row => (
-                <tr key={row.h24}>
-                  <td className="font-medium">{row.time12}</td>
-                  <td className="font-mono">{row.time24}</td>
-                  <td className="font-mono" style={{ color: 'var(--accent)' }}>{row.military}</td>
-                  <td className="text-muted">{row.pronunciation}</td>
+        {/* Reference 24h Table */}
+        <div className="card mtc-table-card">
+          <h2 className="text-lg font-semibold" style={{ marginBottom: '1rem' }}>Military Time Reference Chart</h2>
+          <div className="mtc-table-wrap">
+            <table className="mtc-table">
+              <thead>
+                <tr>
+                  <th>12-Hour Standard</th>
+                  <th>24-Hour Format</th>
+                  <th>Military Time</th>
+                  <th>Pronunciation Guide</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {REFERENCE_HOURS.map(row => (
+                  <tr key={row.h24}>
+                    <td>{row.time12}</td>
+                    <td className="font-mono">{row.time24}</td>
+                    <td className="font-mono font-semibold" style={{ color: 'var(--accent)' }}>{row.military}</td>
+                    <td className="text-muted text-sm">{row.pronunciation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {ROUTES_SEO['/military-time-converter']?.guide && (
-          <ToolGuide guide={ROUTES_SEO['/military-time-converter'].guide} toolName="12-Hour to 24-Hour Military Time Converter" />
+          <ToolGuide guide={ROUTES_SEO['/military-time-converter'].guide} toolName="Military Time Converter" />
         )}
       </div>
     </>

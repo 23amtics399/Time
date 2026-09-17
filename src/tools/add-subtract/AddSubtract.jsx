@@ -46,8 +46,6 @@ export default function AddSubtract() {
     setBaseInput(toDatetimeLocal(new Date()));
   }
 
-  const hasAnyAmount = UNITS.some(u => parseInt(amounts[u]) > 0);
-
   return (
     <>
       <SEO path="/add-subtract" />

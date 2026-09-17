@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { useNow } from '../../hooks/useNow';
 import { dateDiff, pad } from '../../utils/time';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import ShareButton from '../../components/ShareButton';
+import CopyButton from '../../components/CopyButton';
 import './DateCountdown.css';
 
 function getNextAnnualDate(month, day) {
@@ -32,13 +35,35 @@ function toDateInput(date) {
 }
 
 export default function DateCountdown() {
+  const [searchParams] = useSearchParams();
   const [targetDate, setTargetDate] = useLocalStorage('date-countdown-target', toDateInput(new Date(new Date().getFullYear() + 1, 0, 1)));
   const [eventName,  setEventName]  = useLocalStorage('date-countdown-name', 'New Year');
   const now = useNow(true, 'second');
 
+  // Read URL query params on mount
+  useEffect(() => {
+    const qDate = searchParams.get('date');
+    const qName = searchParams.get('name');
+    if (qDate && /^\d{4}-\d{2}-\d{2}$/.test(qDate)) {
+      setTargetDate(qDate);
+    }
+    if (qName) {
+      setEventName(qName);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const target = new Date(targetDate + 'T00:00:00');
   const diff = dateDiff(now, target);
   const isPast = diff.sign < 0;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/date-countdown?date=${targetDate}&name=${encodeURIComponent(eventName)}`
+    : `https://time.sji.one/date-countdown?date=${targetDate}&name=${encodeURIComponent(eventName)}`;
+
+  const copyText = useMemo(() => {
+    if (isPast) return `${eventName} on ${targetDate} has already passed.`;
+    return `Countdown to ${eventName}: ${diff.days} days, ${diff.hours} hours, ${diff.minutes} minutes, ${diff.seconds} seconds`;
+  }, [eventName, targetDate, isPast, diff]);
 
   return (
     <>
@@ -81,6 +106,19 @@ export default function DateCountdown() {
           <p className="dcd-target-date text-muted text-sm">
             {new Intl.DateTimeFormat('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(target)}
           </p>
+
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem' }}>
+            <ShareButton
+              url={shareUrl}
+              title={`Countdown to ${eventName}`}
+              text={`Countdown to ${eventName}: ${diff.days} days remaining!`}
+            />
+            <CopyButton
+              text={copyText}
+              label="Copy countdown"
+              ariaLabel="Copy countdown text"
+            />
+          </div>
         </div>
 
         {/* Configure */}
@@ -104,7 +142,7 @@ export default function DateCountdown() {
           <p className="field-label" style={{ marginBottom: '0.75rem' }}>Quick Presets</p>
           <div className="dcd-preset-grid">
             {PRESETS.map(p => (
-              <button key={p.label} className="btn btn-secondary"
+              <button key={p.label} type="button" className="btn btn-secondary"
                 onClick={() => {
                   setEventName(p.label);
                   setTargetDate(toDateInput(p.getDate()));

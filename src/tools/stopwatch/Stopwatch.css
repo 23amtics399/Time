@@ -1,4 +1,6 @@
-.sw-page { align-items: center; }
+.sw-page {
+  align-items: center;
+}
 
 .sw-display {
   text-align: center;
@@ -39,17 +41,78 @@
   max-width: 480px;
 }
 
+.sw-shortcuts-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.sw-shortcuts-hint svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sw-shortcuts-hint kbd {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
 .sw-laps {
   width: 100%;
   max-width: 480px;
-  padding: 1rem;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
 }
 
 .sw-laps-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 0.75rem;
+}
+
+.sw-laps-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sw-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.sw-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sw-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sw-stat-val {
+  font-size: 0.85rem;
 }
 
 .sw-laps-list {
@@ -69,10 +132,27 @@
   font-size: 0.875rem;
 }
 
-.sw-lap-row:last-child { border-bottom: none; }
+.sw-lap-row:last-child {
+  border-bottom: none;
+}
 
-.sw-lap-num   { min-width: 52px; }
-.sw-lap-split { flex: 1; font-size: 1rem; }
-.sw-lap-total { color: var(--text-faint); }
-.sw-fastest .sw-lap-split { color: var(--success); }
-.sw-slowest .sw-lap-split { color: var(--danger); }
+.sw-lap-num {
+  min-width: 52px;
+}
+
+.sw-lap-split {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.sw-lap-total {
+  color: var(--text-faint);
+}
+
+.sw-fastest .sw-lap-split {
+  color: var(--success);
+}
+
+.sw-slowest .sw-lap-split {
+  color: var(--danger);
+}

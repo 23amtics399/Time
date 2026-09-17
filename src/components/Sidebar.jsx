@@ -1,76 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import {
-  DigitalClockIcon,
-  AnalogClockIcon,
-  WorldClockIcon,
-  StopwatchIcon,
-  CountdownIcon,
-  PomodoroIcon,
-  AlarmIcon,
-  UnixIcon,
-  TimezoneIcon,
-  TimeDiffIcon,
-  AddSubtractIcon,
-  DateCountdownIcon,
-  MeetingIcon,
-  TimeUnitIcon,
-  MilitaryTimeIcon,
-  WorkingHoursIcon,
-  TimeFormatsIcon,
-  DstCheckerIcon,
-  SleepTimeIcon,
-  WeekNumberIcon,
-} from './icons';
+import { TOOL_GROUPS, getToolByPath } from '../data/tools';
+import { useFavorites } from '../hooks/useFavorites';
+import { StarIcon } from './icons';
 import './Sidebar.css';
 
-const TOOLS = [
-  {
-    category: 'Live Clocks',
-    icon: '🕐',
-    items: [
-      { path: '/clock',       label: 'Digital Clock',  icon: DigitalClockIcon },
-      { path: '/analog',      label: 'Analog Clock',   icon: AnalogClockIcon },
-      { path: '/world-clock', label: 'World Clock',    icon: WorldClockIcon },
-    ],
-  },
-  {
-    category: 'Timers',
-    icon: '⏱',
-    items: [
-      { path: '/stopwatch', label: 'Stopwatch',         icon: StopwatchIcon },
-      { path: '/countdown', label: 'Countdown Timer',   icon: CountdownIcon },
-      { path: '/pomodoro',  label: 'Pomodoro Timer',    icon: PomodoroIcon },
-      { path: '/alarm',     label: 'Alarm',             icon: AlarmIcon },
-    ],
-  },
-  {
-    category: 'Converters',
-    icon: '🔄',
-    items: [
-      { path: '/unix',                     label: 'Unix Timestamp',     icon: UnixIcon },
-      { path: '/timezone',                 label: 'Timezone Converter', icon: TimezoneIcon },
-      { path: '/time-diff',                label: 'Time Difference',    icon: TimeDiffIcon },
-      { path: '/add-subtract',             label: 'Add / Subtract',     icon: AddSubtractIcon },
-      { path: '/time-converter',           label: 'Time Unit Converter', icon: TimeUnitIcon },
-      { path: '/military-time-converter',  label: 'Military Time',      icon: MilitaryTimeIcon },
-      { path: '/time-formats',             label: 'Time Formats',       icon: TimeFormatsIcon },
-    ],
-  },
-  {
-    category: 'Planning',
-    icon: '📅',
-    items: [
-      { path: '/date-countdown', label: 'Date Countdown',   icon: DateCountdownIcon },
-      { path: '/meeting',        label: 'Meeting Planner',  icon: MeetingIcon },
-      { path: '/working-hours',  label: 'Working Hours',    icon: WorkingHoursIcon },
-      { path: '/dst-checker',    label: 'DST Checker',      icon: DstCheckerIcon },
-      { path: '/sleep-time',     label: 'Sleep Time',       icon: SleepTimeIcon },
-      { path: '/week-number',    label: 'Week Number',      icon: WeekNumberIcon },
-    ],
-  },
-];
-
 export default function Sidebar({ open, onClose }) {
+  const { favorites } = useFavorites();
+
+  const favoriteTools = favorites
+    .map(path => getToolByPath(path))
+    .filter(Boolean);
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -81,26 +21,61 @@ export default function Sidebar({ open, onClose }) {
         aria-label="Tool navigation"
       >
         <div className="sidebar-inner">
-          {TOOLS.map(group => (
+          {/* Favorites Group (if any) */}
+          {favoriteTools.length > 0 && (
+            <div className="sidebar-group sidebar-group--favorites">
+              <p className="sidebar-group-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <StarIcon style={{ width: 12, height: 12, color: 'var(--amber)' }} filled />
+                Favorites
+              </p>
+              <ul>
+                {favoriteTools.map(tool => {
+                  const Icon = tool.icon;
+                  return (
+                    <li key={`fav-${tool.path}`}>
+                      <NavLink
+                        to={tool.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`
+                        }
+                        onClick={onClose}
+                      >
+                        <span className="sidebar-link-icon" aria-hidden="true">
+                          <Icon />
+                        </span>
+                        {tool.name}
+                      </NavLink>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
+          {/* All Categories */}
+          {TOOL_GROUPS.map(group => (
             <div key={group.category} className="sidebar-group">
               <p className="sidebar-group-label">{group.category}</p>
               <ul>
-                {group.items.map(({ path, label, icon: Icon }) => (
-                  <li key={path}>
-                    <NavLink
-                      to={path}
-                      className={({ isActive }) =>
-                        `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`
-                      }
-                      onClick={onClose}
-                    >
-                      <span className="sidebar-link-icon" aria-hidden="true">
-                        <Icon />
-                      </span>
-                      {label}
-                    </NavLink>
-                  </li>
-                ))}
+                {group.tools.map(tool => {
+                  const Icon = tool.icon;
+                  return (
+                    <li key={tool.path}>
+                      <NavLink
+                        to={tool.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`
+                        }
+                        onClick={onClose}
+                      >
+                        <span className="sidebar-link-icon" aria-hidden="true">
+                          <Icon />
+                        </span>
+                        {tool.name}
+                      </NavLink>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -115,4 +90,13 @@ export default function Sidebar({ open, onClose }) {
   );
 }
 
-export { TOOLS };
+// Export TOOLS for backwards compatibility
+export const TOOLS = TOOL_GROUPS.map(group => ({
+  category: group.category,
+  icon: group.category.includes('Clock') ? '🕐' : group.category.includes('Timer') ? '⏱' : group.category.includes('Converter') ? '🔄' : '📅',
+  items: group.tools.map(t => ({
+    path: t.path,
+    label: t.name,
+    icon: t.icon,
+  })),
+}));

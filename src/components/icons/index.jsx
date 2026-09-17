@@ -320,3 +320,89 @@ export function SoundIcon({ size = 18, muted = false, className = '', ...props }
     </svg>
   );
 }
+
+export function SearchIcon({ size = 18, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
+      <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+export function StarIcon({ size = 18, filled = false, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} aria-hidden="true" className={className} {...props}>
+      <polygon
+        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function ShareIcon({ size = 18, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="1.8"/>
+      <circle cx="6" cy="12" r="3" stroke="currentColor" strokeWidth="1.8"/>
+      <circle cx="18" cy="19" r="3" stroke="currentColor" strokeWidth="1.8"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+export function ArrowUpIcon({ size = 16, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <polyline points="18 15 12 9 6 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function ArrowDownIcon({ size = 16, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <polyline points="6 9 12 15 18 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function CloseIcon({ size = 16, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+export function KeyboardIcon({ size = 18, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <line x1="6" y1="8" x2="6.01" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="10" y1="8" x2="10.01" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="14" y1="8" x2="14.01" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="18" y1="8" x2="18.01" y2="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="6" y1="12" x2="6.01" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="18" y1="12" x2="18.01" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="9" y1="16" x2="15" y2="16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+export function ExportIcon({ size = 18, className = '', ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} {...props}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="7 10 12 15 17 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+

@@ -1,19 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
 import { TIMEZONES } from '../../data/timezones';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { detectTimezoneDST } from '../../utils/time';
+import ShareButton from '../../components/ShareButton';
+import CopyButton from '../../components/CopyButton';
 import './DSTChecker.css';
 
 const YEARS = [2025, 2026, 2027, 2028, 2029, 2030];
 
 export default function DSTChecker() {
+  const [searchParams] = useSearchParams();
   const [timezone, setTimezone] = useLocalStorage('dst-tz', 'America/New_York');
   const [year, setYear] = useState(new Date().getFullYear());
 
+  useEffect(() => {
+    const qTz = searchParams.get('tz');
+    const qYear = parseInt(searchParams.get('year'), 10);
+    if (qTz && TIMEZONES.some(t => t.value === qTz)) {
+      setTimezone(qTz);
+    }
+    if (!isNaN(qYear) && YEARS.includes(qYear)) {
+      setYear(qYear);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const dstData = detectTimezoneDST(timezone, year);
+  const tzObj = TIMEZONES.find(t => t.value === timezone);
+  const tzLabel = tzObj ? tzObj.label : timezone;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/dst-checker?tz=${encodeURIComponent(timezone)}&year=${year}`
+    : `https://time.sji.one/dst-checker?tz=${encodeURIComponent(timezone)}&year=${year}`;
+
+  const copySummaryText = useMemo(() => {
+    if (!dstData) return '';
+    return `${tzLabel} (${year}):\nStatus: ${dstData.observesDST ? 'Observes DST' : 'No DST'}\nCurrent Offset: ${dstData.currentOffset}\nNext Transition: ${dstData.nextTransition ? `${dstData.nextTransition.direction} on ${dstData.nextTransition.formattedDate}` : 'None'}`;
+  }, [dstData, tzLabel, year]);
 
   return (
     <>
@@ -53,6 +79,19 @@ export default function DSTChecker() {
                   <option key={y} value={y}>{y}</option>
                 ))}
               </select>
+            </div>
+
+            <div style={{ alignSelf: 'flex-end', display: 'flex', gap: '0.5rem', marginBottom: '2px' }}>
+              <ShareButton
+                url={shareUrl}
+                title={`DST Status for ${tzLabel}`}
+                text={`Check Daylight Saving Time information for ${tzLabel} in ${year}`}
+              />
+              <CopyButton
+                text={copySummaryText}
+                label="Copy status"
+                ariaLabel="Copy DST status summary"
+              />
             </div>
           </div>
 

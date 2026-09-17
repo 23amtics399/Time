@@ -1,204 +1,70 @@
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
-import {
-  DigitalClockIcon,
-  AnalogClockIcon,
-  WorldClockIcon,
-  StopwatchIcon,
-  CountdownIcon,
-  PomodoroIcon,
-  AlarmIcon,
-  UnixIcon,
-  TimezoneIcon,
-  TimeDiffIcon,
-  AddSubtractIcon,
-  TimeUnitIcon,
-  MilitaryTimeIcon,
-  TimeFormatsIcon,
-  DateCountdownIcon,
-  MeetingIcon,
-  WorkingHoursIcon,
-  DstCheckerIcon,
-  SleepTimeIcon,
-  WeekNumberIcon,
-} from '../components/icons';
+import { TOOL_GROUPS, getToolByPath } from '../data/tools';
+import { useFavorites } from '../hooks/useFavorites';
+import { useRecentTools } from '../hooks/useRecentTools';
+import { StarIcon } from '../components/icons';
 import './Home.css';
-
-const TOOL_GROUPS = [
-  {
-    category: 'Live Clocks',
-    description: 'Real-time clocks in multiple formats',
-    tools: [
-      {
-        path: '/clock',
-        name: 'Digital Clock',
-        description: 'Full-screen 12/24-hour clock with date and timezone.',
-        icon: DigitalClockIcon,
-        accent: 'violet',
-      },
-      {
-        path: '/analog',
-        name: 'Analog Clock',
-        description: 'Smooth-sweep analog clock with a clean face.',
-        icon: AnalogClockIcon,
-        accent: 'violet',
-      },
-      {
-        path: '/world-clock',
-        name: 'World Clock',
-        description: 'Live time in multiple timezones, side by side.',
-        icon: WorldClockIcon,
-        accent: 'violet',
-      },
-    ],
-  },
-  {
-    category: 'Timers',
-    description: 'Measure and track time',
-    tools: [
-      {
-        path: '/stopwatch',
-        name: 'Stopwatch',
-        description: 'Precise stopwatch with lap times and copy-to-clipboard.',
-        icon: StopwatchIcon,
-        accent: 'green',
-      },
-      {
-        path: '/countdown',
-        name: 'Countdown Timer',
-        description: 'Set a timer with presets or a custom duration. Audio alert.',
-        icon: CountdownIcon,
-        accent: 'green',
-      },
-      {
-        path: '/pomodoro',
-        name: 'Pomodoro Timer',
-        description: '25/5/15 work–break cycles. Fully customizable.',
-        icon: PomodoroIcon,
-        accent: 'green',
-      },
-      {
-        path: '/alarm',
-        name: 'Alarm',
-        description: 'Set one or more alarms with a desktop notification.',
-        icon: AlarmIcon,
-        accent: 'green',
-      },
-    ],
-  },
-  {
-    category: 'Converters',
-    description: 'Convert and calculate time values',
-    tools: [
-      {
-        path: '/unix',
-        name: 'Unix Timestamp',
-        description: 'Convert between Unix epoch and human-readable dates.',
-        icon: UnixIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/timezone',
-        name: 'Timezone Converter',
-        description: 'Convert a date and time between any two timezones.',
-        icon: TimezoneIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/time-diff',
-        name: 'Time Difference',
-        description: 'Calculate the exact difference between two timestamps.',
-        icon: TimeDiffIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/add-subtract',
-        name: 'Add / Subtract Time',
-        description: 'Add or subtract a duration from any date and time.',
-        icon: AddSubtractIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/time-converter',
-        name: 'Time Unit Converter',
-        description: 'Convert between weeks, days, hours, minutes, seconds, and ms.',
-        icon: TimeUnitIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/military-time-converter',
-        name: 'Military Time Converter',
-        description: 'Convert between 12-hour AM/PM and 24-hour military notation.',
-        icon: MilitaryTimeIcon,
-        accent: 'amber',
-      },
-      {
-        path: '/time-formats',
-        name: 'Time Formats',
-        description: 'Format and parse ISO 8601, RFC 2822, and Unix timestamps.',
-        icon: TimeFormatsIcon,
-        accent: 'amber',
-      },
-    ],
-  },
-  {
-    category: 'Planning',
-    description: 'Plan across time and timezones',
-    tools: [
-      {
-        path: '/date-countdown',
-        name: 'Date Countdown',
-        description: 'Countdown to any future date — events, deadlines, holidays.',
-        icon: DateCountdownIcon,
-        accent: 'blue',
-      },
-      {
-        path: '/meeting',
-        name: 'Meeting Planner',
-        description: 'Find the best meeting time across multiple timezones.',
-        icon: MeetingIcon,
-        accent: 'blue',
-      },
-      {
-        path: '/working-hours',
-        name: 'Working Hours',
-        description: 'Calculate net business hours and working days excluding weekends.',
-        icon: WorkingHoursIcon,
-        accent: 'blue',
-      },
-      {
-        path: '/dst-checker',
-        name: 'DST Checker',
-        description: 'Inspect Daylight Saving Time schedules, transitions, and offsets.',
-        icon: DstCheckerIcon,
-        accent: 'blue',
-      },
-      {
-        path: '/sleep-time',
-        name: 'Sleep Time Planner',
-        description: 'Plan sleep and wake schedules aligned with 90-minute sleep cycles.',
-        icon: SleepTimeIcon,
-        accent: 'blue',
-      },
-      {
-        path: '/week-number',
-        name: 'Week Number',
-        description: 'Current ISO 8601 week number, day of year, and annual progress.',
-        icon: WeekNumberIcon,
-        accent: 'blue',
-      },
-    ],
-  },
-];
 
 const ACCENT_VARS = {
   violet: 'var(--accent)',
-  green:  'var(--success)',
-  amber:  'var(--warning)',
-  blue:   'hsl(210, 90%, 60%)',
+  green:  'var(--green)',
+  amber:  'var(--amber)',
+  blue:   'var(--blue)',
 };
 
 export default function Home() {
+  const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const { recentTools } = useRecentTools();
+
+  const favoriteTools = favorites
+    .map(path => getToolByPath(path))
+    .filter(Boolean);
+
+  const recentToolItems = recentTools
+    .map(path => getToolByPath(path))
+    .filter(Boolean);
+
+  const renderToolCard = (tool) => {
+    const Icon = tool.icon;
+    const color = ACCENT_VARS[tool.accent] || ACCENT_VARS.violet;
+    const favorited = isFavorite(tool.path);
+
+    return (
+      <Link
+        key={tool.path}
+        to={tool.path}
+        className="tool-card"
+        style={{ '--card-accent': color }}
+        aria-label={`${tool.name} — ${tool.description}`}
+      >
+        <div className="tool-card-icon" aria-hidden="true">
+          <Icon />
+        </div>
+        <div className="tool-card-body">
+          <h3 className="tool-card-name">{tool.name}</h3>
+          <p className="tool-card-desc">{tool.description}</p>
+        </div>
+        <div className="tool-card-actions">
+          <button
+            type="button"
+            className={`tool-card-fav ${favorited ? 'tool-card-fav--active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleFavorite(tool.path);
+            }}
+            aria-label={favorited ? `Remove ${tool.name} from favorites` : `Add ${tool.name} to favorites`}
+            title={favorited ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <StarIcon filled={favorited} />
+          </button>
+          <span className="tool-card-arrow" aria-hidden="true">→</span>
+        </div>
+      </Link>
+    );
+  };
+
   return (
     <>
       <SEO path="/" />
@@ -216,8 +82,38 @@ export default function Home() {
           </p>
         </section>
 
-        {/* Tool Grid */}
+        {/* Tool Groups */}
         <div className="home-groups">
+          {/* Favorites Section (if any) */}
+          {favoriteTools.length > 0 && (
+            <section className="home-group animate-fade-in" aria-label="Favorite tools">
+              <div className="home-group-header">
+                <h2 className="home-group-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <StarIcon filled style={{ width: 18, height: 18, color: 'var(--amber)' }} />
+                  Favorites
+                </h2>
+                <p className="home-group-desc text-muted text-sm">Your pinned utilities for instant access</p>
+              </div>
+              <div className="home-grid">
+                {favoriteTools.map(renderToolCard)}
+              </div>
+            </section>
+          )}
+
+          {/* Recently Visited Section (if any) */}
+          {recentToolItems.length > 0 && (
+            <section className="home-group animate-fade-in" aria-label="Recently used tools">
+              <div className="home-group-header">
+                <h2 className="home-group-title">Recently Used</h2>
+                <p className="home-group-desc text-muted text-sm">Tools you recently visited</p>
+              </div>
+              <div className="home-grid">
+                {recentToolItems.map(renderToolCard)}
+              </div>
+            </section>
+          )}
+
+          {/* Categorized Tools */}
           {TOOL_GROUPS.map((group, gi) => (
             <section key={group.category} className="home-group animate-fade-in" style={{ animationDelay: `${gi * 80}ms` }}>
               <div className="home-group-header">
@@ -226,28 +122,7 @@ export default function Home() {
               </div>
 
               <div className="home-grid">
-                {group.tools.map(tool => {
-                  const Icon = tool.icon;
-                  const color = ACCENT_VARS[tool.accent] || ACCENT_VARS.violet;
-                  return (
-                    <Link
-                      key={tool.path}
-                      to={tool.path}
-                      className="tool-card"
-                      style={{ '--card-accent': color }}
-                      aria-label={`${tool.name} — ${tool.description}`}
-                    >
-                      <div className="tool-card-icon" aria-hidden="true">
-                        <Icon />
-                      </div>
-                      <div className="tool-card-body">
-                        <h3 className="tool-card-name">{tool.name}</h3>
-                        <p className="tool-card-desc">{tool.description}</p>
-                      </div>
-                      <span className="tool-card-arrow" aria-hidden="true">→</span>
-                    </Link>
-                  );
-                })}
+                {group.tools.map(renderToolCard)}
               </div>
             </section>
           ))}
@@ -255,14 +130,14 @@ export default function Home() {
 
         {/* Informative Crawlable Overview */}
         <section className="home-about card" aria-label="About Time Tools">
-          <h2 className="home-about-heading">Browser-Based Time Utilities Built for Speed & Precision</h2>
+          <h2 className="home-about-heading">Browser-Based Time Utilities Built for Speed &amp; Precision</h2>
           <p className="home-about-text text-muted">
             Time Tools brings together essential timing, conversion, and scheduling utilities into a single lightweight web application. Whether you need a distraction-free digital clock for your desk, a millisecond stopwatch for athletic training, an interval Pomodoro timer for deep work sessions, or an international meeting planner for remote teams, every utility runs entirely within your browser with zero latency.
           </p>
 
           <div className="home-about-grid">
             <div className="home-about-card">
-              <h3 className="home-card-title">Privacy & Local-First</h3>
+              <h3 className="home-card-title">Privacy &amp; Local-First</h3>
               <p className="home-card-text text-muted text-sm">
                 All time calculations, alarm schedules, and stopwatch splits are computed directly on your device. We do not track your activity, record your time entries, or require account creation.
               </p>
@@ -274,7 +149,7 @@ export default function Home() {
               </p>
             </div>
             <div className="home-about-card">
-              <h3 className="home-card-title">Daylight Saving & IANA Accuracy</h3>
+              <h3 className="home-card-title">Daylight Saving &amp; IANA Accuracy</h3>
               <p className="home-card-text text-muted text-sm">
                 International clocks and timezone converters leverage standard IANA timezone databases built into modern browsers, guaranteeing accurate local offsets and seasonal DST transitions.
               </p>
@@ -327,5 +202,3 @@ function HeroClockIcon() {
     </svg>
   );
 }
-
-

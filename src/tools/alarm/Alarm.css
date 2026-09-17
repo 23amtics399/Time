@@ -1,14 +1,41 @@
-.alarm-notif-prompt { margin-bottom: 1rem; border-color: var(--warning-dim); }
+.alarm-notif-prompt {
+  margin-bottom: 1rem;
+  border-color: var(--warning-dim);
+}
 
-.alarm-current { margin-bottom: 1rem; }
+.alarm-current {
+  margin-bottom: 1rem;
+}
 
-.alarm-form { margin-bottom: 1.5rem; }
+.alarm-form {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+}
 
-.alarm-form-row {
-  display: flex;
+.alarm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.5fr;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: flex-end;
+}
+
+.alarm-custom-days-wrap {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.alarm-days-row {
+  display: flex;
   flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.alarm-form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
 }
 
 .alarm-list {
@@ -23,15 +50,18 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  transition: opacity var(--dur-base) var(--ease);
+  transition: opacity var(--dur-base) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 
-.alarm-inactive { opacity: 0.45; }
+.alarm-inactive {
+  opacity: 0.45;
+}
 
 .alarm-item-main {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
 .alarm-time {
@@ -39,12 +69,31 @@
   font-weight: 400;
   letter-spacing: -0.02em;
   color: var(--text);
+  line-height: 1.1;
+}
+
+.alarm-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.alarm-label {
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.alarm-next-trigger {
+  color: var(--accent);
+  font-size: 0.75rem;
 }
 
 .alarm-item-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 /* Toggle switch */
@@ -53,12 +102,14 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  margin-right: 0.25rem;
 }
 
 .alarm-toggle input {
   position: absolute;
   opacity: 0;
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
 }
 
 .alarm-toggle-track {
@@ -75,8 +126,10 @@
 .alarm-toggle-track::after {
   content: '';
   position: absolute;
-  top: 3px; left: 3px;
-  width: 16px; height: 16px;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--text-faint);
   transition: transform var(--dur-base) var(--ease-spring),
@@ -91,4 +144,19 @@
 .alarm-toggle input:checked + .alarm-toggle-track::after {
   background: white;
   transform: translateX(20px);
+}
+
+@media (max-width: 640px) {
+  .alarm-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .alarm-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .alarm-item-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
 }

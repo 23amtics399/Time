@@ -154,7 +154,6 @@
   font-size: 1rem;
   transition: transform var(--dur-fast) var(--ease),
               color var(--dur-fast) var(--ease);
-  margin-top: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -162,6 +161,44 @@
   transform: translateX(3px);
   color: var(--card-accent, var(--accent));
 }
+
+.tool-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.tool-card-fav {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--dur-fast) var(--ease);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.tool-card-fav:hover {
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 15%, transparent);
+}
+
+.tool-card-fav--active {
+  color: var(--amber);
+}
+
+.tool-card-fav svg {
+  width: 16px;
+  height: 16px;
+}
+
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
