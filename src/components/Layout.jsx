@@ -69,14 +69,17 @@ export default function Layout({ children }) {
           onClose={closeSidebar}
         />
 
-        <main
-          className="app-main"
-          id="main-content"
-          tabIndex={-1}
-        >
-          {children}
+        <div className="app-body">
+          <main
+            className="app-main"
+            id="main-content"
+            tabIndex={-1}
+          >
+            {children}
+          </main>
+
           <Footer />
-        </main>
+        </div>
 
         <SearchModal
           open={searchOpen}

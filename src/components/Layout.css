@@ -6,12 +6,19 @@
   flex-direction: column;
 }
 
-.app-main {
+.app-body {
   margin-top: var(--header-height);
   flex: 1;
   /* Offset for sidebar on desktop */
   margin-left: var(--sidebar-width);
   transition: margin-left var(--dur-base) var(--ease);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-main {
+  flex: 1;
   outline: none; /* skip-link target */
   display: flex;
   flex-direction: column;
@@ -19,7 +26,7 @@
 
 /* Mobile — no sidebar offset */
 @media (max-width: 768px) {
-  .app-main {
+  .app-body {
     margin-left: 0;
   }
 }
