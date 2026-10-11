@@ -13,6 +13,8 @@
   margin-left: var(--sidebar-width);
   transition: margin-left var(--dur-base) var(--ease);
   outline: none; /* skip-link target */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Mobile — no sidebar offset */

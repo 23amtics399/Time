@@ -28,6 +28,7 @@ function cleanTemplateHead(html) {
     .replace(/<!--\s*Twitter[\s\S]*?-->/gi, '')
     .replace(/<title>[\s\S]*?<\/title>/gi, '')
     .replace(/<meta\s+name=["']description["'][^>]*>/gi, '')
+    .replace(/<meta\s+name=["']robots["'][^>]*>/gi, '')
     .replace(/<link\s+[^>]*rel=["']canonical["'][^>]*>/gi, '')
     .replace(/<meta\s+[^>]*property=["']og:[^"']*["'][^>]*>/gi, '')
     .replace(/<meta\s+[^>]*name=["']twitter:[^"']*["'][^>]*>/gi, '')
@@ -72,6 +73,7 @@ async function prerender() {
         `<!-- Primary SEO -->`,
         `<title>${config.title}</title>`,
         `<meta name="description" content="${escapeHtml(config.description)}" />`,
+        `<meta name="robots" content="index, follow" />`,
         `<link rel="canonical" href="${config.canonical}" />`,
         `<!-- Open Graph -->`,
         `<meta property="og:title" content="${escapeHtml(config.og?.title || config.title)}" />`,
@@ -99,20 +101,36 @@ async function prerender() {
       // 4. Inject into root container
       const finalHtml = injectedHead.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
 
-      // 5. Output file path
+      // 5. Output file path (extensionless route files for Cloudflare Pages clean URLs)
       let outPath;
       if (routePath === '/') {
         outPath = path.resolve(distDir, 'index.html');
       } else {
-        const subDir = path.resolve(distDir, routePath.replace(/^\//, ''));
-        if (!fs.existsSync(subDir)) {
-          fs.mkdirSync(subDir, { recursive: true });
+        const routeName = routePath.replace(/^\//, '');
+        // Clean up legacy directory if present to avoid Cloudflare directory-index 308 redirection
+        const oldSubDir = path.resolve(distDir, routeName);
+        if (fs.existsSync(oldSubDir) && fs.statSync(oldSubDir).isDirectory()) {
+          fs.rmSync(oldSubDir, { recursive: true, force: true });
         }
-        outPath = path.resolve(subDir, 'index.html');
+        outPath = path.resolve(distDir, `${routeName}.html`);
       }
 
       fs.writeFileSync(outPath, finalHtml, 'utf8');
     }
+
+    // 6. Prerender 404.html for Cloudflare Pages native 404 status handling
+    console.log('   Rendering 404.html...');
+    const { html: notFoundHtml } = render('/404-not-found');
+    let cleaned404 = cleanTemplateHead(rawTemplate);
+    const seoTags404 = [
+      `<!-- 404 Error SEO -->`,
+      `<title>Page Not Found | Time Tools</title>`,
+      `<meta name="description" content="The requested page could not be found. Explore our 20 free online time utilities." />`,
+      `<meta name="robots" content="noindex, nofollow" />`,
+    ];
+    const injectedHead404 = cleaned404.replace('</head>', `    ${seoTags404.join('\n    ')}\n  </head>`);
+    const final404Html = injectedHead404.replace('<div id="root"></div>', `<div id="root">${notFoundHtml}</div>`);
+    fs.writeFileSync(path.resolve(distDir, '404.html'), final404Html, 'utf8');
 
     console.log('✅ Static prerendering completed successfully.');
   } finally {

@@ -1,1 +1,23 @@
-/* /index.html 200
+# Cloudflare Pages Redirects
+# Permanent 308 redirects from trailing-slash paths to clean canonical URLs
+/clock/ /clock 308
+/analog/ /analog 308
+/world-clock/ /world-clock 308
+/stopwatch/ /stopwatch 308
+/countdown/ /countdown 308
+/pomodoro/ /pomodoro 308
+/alarm/ /alarm 308
+/unix/ /unix 308
+/timezone/ /timezone 308
+/time-diff/ /time-diff 308
+/add-subtract/ /add-subtract 308
+/date-countdown/ /date-countdown 308
+/meeting/ /meeting 308
+/time-converter/ /time-converter 308
+/military-time-converter/ /military-time-converter 308
+/working-hours/ /working-hours 308
+/time-formats/ /time-formats 308
+/dst-checker/ /dst-checker 308
+/sleep-time/ /sleep-time 308
+/week-number/ /week-number 308
+/about/ /about 308

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import Footer from './Footer';
 import SearchModal from './SearchModal';
 import { ToastProvider } from '../contexts/ToastContext';
 import { useTheme } from '../hooks/useTheme';
@@ -74,6 +75,7 @@ export default function Layout({ children }) {
           tabIndex={-1}
         >
           {children}
+          <Footer />
         </main>
 
         <SearchModal

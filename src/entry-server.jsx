@@ -22,6 +22,8 @@ import TimeFormats from './tools/time-formats/TimeFormats';
 import DSTChecker from './tools/dst-checker/DSTChecker';
 import SleepTimePlanner from './tools/sleep-time/SleepTimePlanner';
 import WeekNumber from './tools/week-number/WeekNumber';
+import About from './pages/About';
+import NotFound from './pages/NotFound';
 import { TimeProvider } from './contexts/TimeContext';
 import { AlarmProvider } from './contexts/AlarmContext';
 import { TimerProvider } from './contexts/TimerContext';
@@ -55,6 +57,8 @@ export function render(url) {
                 <Route path="/dst-checker" element={<DSTChecker />} />
                 <Route path="/sleep-time" element={<SleepTimePlanner />} />
                 <Route path="/week-number" element={<WeekNumber />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
           </MemoryRouter>

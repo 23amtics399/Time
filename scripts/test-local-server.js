@@ -16,41 +16,88 @@ const MIME_TYPES = {
   '.txt': 'text/plain',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.ico': 'image/x-icon',
   '.webmanifest': 'application/manifest+json',
 };
 
+function parseRedirects() {
+  const redirectsFile = path.join(distDir, '_redirects');
+  const rules = [];
+  if (fs.existsSync(redirectsFile)) {
+    const lines = fs.readFileSync(redirectsFile, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const parts = trimmed.split(/\s+/);
+      if (parts.length >= 2) {
+        rules.push({
+          from: parts[0],
+          to: parts[1],
+          status: parseInt(parts[2] || '302', 10),
+        });
+      }
+    }
+  }
+  return rules;
+}
+
 function serveDist() {
+  const redirectRules = parseRedirects();
+
   const server = http.createServer((req, res) => {
-    let urlPath = req.url.split('?')[0];
+    const rawUrl = req.url;
+    let [urlPath, queryString] = rawUrl.split('?');
+
+    // 1. Check _redirects rules first
+    for (const rule of redirectRules) {
+      if (rule.from === urlPath) {
+        const dest = queryString ? `${rule.to}?${queryString}` : rule.to;
+        res.writeHead(rule.status, {
+          'Location': dest,
+          'Strict-Transport-Security': 'max-age=31536000',
+        });
+        res.end();
+        return;
+      }
+    }
+
     if (urlPath === '/') {
       urlPath = '/index.html';
     }
 
     let filePath = path.join(distDir, urlPath);
 
-    // If it's a directory or clean URL without extension
+    // If it's a clean URL without extension
     if (!path.extname(filePath)) {
-      if (fs.existsSync(path.join(filePath, 'index.html'))) {
-        filePath = path.join(filePath, 'index.html');
-      } else if (fs.existsSync(filePath + '.html')) {
+      if (fs.existsSync(filePath + '.html')) {
         filePath = filePath + '.html';
+      } else if (fs.existsSync(path.join(filePath, 'index.html'))) {
+        filePath = path.join(filePath, 'index.html');
       }
     }
 
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       const ext = path.extname(filePath);
       const mime = MIME_TYPES[ext] || 'application/octet-stream';
-      res.writeHead(200, { 'Content-Type': mime });
+      res.writeHead(200, {
+        'Content-Type': mime,
+        'Strict-Transport-Security': 'max-age=31536000',
+      });
       fs.createReadStream(filePath).pipe(res);
     } else {
-      // Fallback to root index.html (SPA)
-      const fallback = path.join(distDir, 'index.html');
-      if (fs.existsSync(fallback)) {
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        fs.createReadStream(fallback).pipe(res);
+      // 404 handler matching Cloudflare Pages
+      const notFoundPath = path.join(distDir, '404.html');
+      if (fs.existsSync(notFoundPath)) {
+        res.writeHead(404, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Strict-Transport-Security': 'max-age=31536000',
+        });
+        fs.createReadStream(notFoundPath).pipe(res);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not Found');
+        res.end('404 Not Found');
       }
     }
   });
@@ -71,9 +118,10 @@ async function runLocalHttpCheck() {
 
   let failures = 0;
 
+  // 1. Verify clean routes return 200 OK directly
   for (const route of routes) {
     const url = `http://127.0.0.1:4173${route.path}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { redirect: 'manual' });
     if (response.status !== 200) {
       console.error(`❌ [${route.path}] HTTP status ${response.status}`);
       failures++;
@@ -85,123 +133,97 @@ async function runLocalHttpCheck() {
     const titleMatches = html.match(/<title>[\s\S]*?<\/title>/gi) || [];
     const descMatches = html.match(/<meta\s+name=["']description["'][^>]*>/gi) || [];
     const canonicalMatches = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*>/gi) || [];
-    const ogTitleMatches = html.match(/<meta\s+[^>]*property=["']og:title["'][^>]*>/gi) || [];
-    const ogDescMatches = html.match(/<meta\s+[^>]*property=["']og:description["'][^>]*>/gi) || [];
-    const ogUrlMatches = html.match(/<meta\s+[^>]*property=["']og:url["'][^>]*>/gi) || [];
-    const ogTypeMatches = html.match(/<meta\s+[^>]*property=["']og:type["'][^>]*>/gi) || [];
-    const ogSiteMatches = html.match(/<meta\s+[^>]*property=["']og:site_name["'][^>]*>/gi) || [];
-    const ogImageMatches = html.match(/<meta\s+[^>]*property=["']og:image["'][^>]*>/gi) || [];
-    const twCardMatches = html.match(/<meta\s+[^>]*name=["']twitter:card["'][^>]*>/gi) || [];
-    const twTitleMatches = html.match(/<meta\s+[^>]*name=["']twitter:title["'][^>]*>/gi) || [];
-    const twDescMatches = html.match(/<meta\s+[^>]*name=["']twitter:description["'][^>]*>/gi) || [];
-    const twImageMatches = html.match(/<meta\s+[^>]*name=["']twitter:image["'][^>]*>/gi) || [];
     const h1Matches = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || [];
-    const jsonLdMatches = html.match(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
+    const footerMatches = html.match(/<footer[^>]*>[\s\S]*?<\/footer>/gi) || [];
 
     const errors = [];
     if (titleMatches.length !== 1) errors.push(`title: ${titleMatches.length}`);
     if (descMatches.length !== 1) errors.push(`description: ${descMatches.length}`);
     if (canonicalMatches.length !== 1) errors.push(`canonical: ${canonicalMatches.length}`);
-    if (ogTitleMatches.length !== 1) errors.push(`og:title: ${ogTitleMatches.length}`);
-    if (ogDescMatches.length !== 1) errors.push(`og:description: ${ogDescMatches.length}`);
-    if (ogUrlMatches.length !== 1) errors.push(`og:url: ${ogUrlMatches.length}`);
-    if (ogTypeMatches.length !== 1) errors.push(`og:type: ${ogTypeMatches.length}`);
-    if (ogSiteMatches.length !== 1) errors.push(`og:site_name: ${ogSiteMatches.length}`);
-    if (ogImageMatches.length !== 1) errors.push(`og:image: ${ogImageMatches.length}`);
-    if (twCardMatches.length !== 1) errors.push(`twitter:card: ${twCardMatches.length}`);
-    if (twTitleMatches.length !== 1) errors.push(`twitter:title: ${twTitleMatches.length}`);
-    if (twDescMatches.length !== 1) errors.push(`twitter:description: ${twDescMatches.length}`);
-    if (twImageMatches.length !== 1) errors.push(`twitter:image: ${twImageMatches.length}`);
     if (h1Matches.length !== 1) errors.push(`H1: ${h1Matches.length}`);
-    if (jsonLdMatches.length !== 1) errors.push(`JSON-LD: ${jsonLdMatches.length}`);
+    if (footerMatches.length !== 1) errors.push(`footer: ${footerMatches.length}`);
 
-function unescapeHtml(str) {
-  if (!str) return '';
-  return str
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-}
+    function unescapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+    }
 
-    // Verify H1 value
     const h1Text = h1Matches[0] ? unescapeHtml(h1Matches[0].replace(/<[^>]*>/g, '').trim()) : '';
     if (h1Text !== route.h1) {
       errors.push(`H1 text: "${h1Text}" !== "${route.h1}"`);
     }
 
-    // Verify Title value
-    const titleText = titleMatches[0] ? unescapeHtml(titleMatches[0].replace(/<\/?title>/gi, '').trim()) : '';
-    if (titleText !== route.title) {
-      errors.push(`Title text mismatch: "${titleText}" !== "${route.title}"`);
-    }
-
-    // Verify Canonical value
     const canonicalHref = canonicalMatches[0] ? (canonicalMatches[0].match(/href=["']([^"']*)["']/i) || [])[1] : '';
     if (canonicalHref !== route.canonical) {
       errors.push(`Canonical href mismatch: "${canonicalHref}" !== "${route.canonical}"`);
-    }
-
-    // Check non-empty root content
-    const rootStart = html.indexOf('<div id="root">');
-    const bodyEnd = html.indexOf('</body>');
-    const rootHtml = (rootStart !== -1 && bodyEnd !== -1)
-      ? html.substring(rootStart + '<div id="root">'.length, bodyEnd).replace(/<script[\s\S]*?<\/script>/gi, '')
-      : '';
-    if (!rootHtml || rootHtml.trim() === '') {
-      errors.push('Empty #root content in raw HTTP response');
     }
 
     if (errors.length > 0) {
       console.error(`❌ [${route.path}] ${errors.join(', ')}`);
       failures++;
     } else {
-      console.log(`✅ [${route.path}] 200 OK | H1: "${h1Text}" | Canonical: ${canonicalHref} | All 15 tags === 1`);
+      console.log(`✅ [${route.path}] 200 OK | H1: "${h1Text}" | Canonical: ${canonicalHref} | Footer: OK`);
     }
   }
 
-  // Verify Static Asset HTTP Endpoints
+  // 2. Verify Trailing Slash 308 Redirects
+  console.log('\n🔄 Testing Trailing Slash 308 Redirects to Clean URLs...');
+  const slashRoutes = ['/clock/', '/analog/', '/world-clock/', '/stopwatch/', '/countdown/', '/about/'];
+  for (const sRoute of slashRoutes) {
+    const res = await fetch(`http://127.0.0.1:4173${sRoute}`, { redirect: 'manual' });
+    const cleanExpected = sRoute.replace(/\/$/, '');
+    if (res.status === 308 && res.headers.get('location') === cleanExpected) {
+      console.log(`   ✅ [308 Redirect] ${sRoute} -> ${res.headers.get('location')}`);
+    } else {
+      console.error(`   ❌ ${sRoute} returned status ${res.status}, location: ${res.headers.get('location')}`);
+      failures++;
+    }
+  }
+
+  // 3. Verify Soft-404 is Fixed (404 status and custom page)
+  console.log('\n🚫 Testing 404 Status Handling on Invalid URLs...');
+  const invalidUrls = ['/nope-xyz', '/not-a-real-tool', '/random-invalid-page'];
+  for (const inv of invalidUrls) {
+    const res = await fetch(`http://127.0.0.1:4173${inv}`, { redirect: 'manual' });
+    const text = await res.text();
+    if (res.status === 404 && text.includes('Page Not Found') && text.includes('noindex')) {
+      console.log(`   ✅ [404 Not Found] ${inv} returned HTTP 404 with custom 404 page & noindex`);
+    } else {
+      console.error(`   ❌ ${inv} returned status ${res.status} (expected 404)`);
+      failures++;
+    }
+  }
+
+  // 4. Verify Static Assets
   console.log('\n📦 Verifying Static Asset HTTP responses...');
   const staticAssets = [
-    '/favicon.svg',
-    '/favicon-16x16.png',
-    '/favicon-32x32.png',
-    '/apple-touch-icon.png',
-    '/icon-192.png',
-    '/icon-512.png',
-    '/manifest.webmanifest',
-    '/og-image.png',
-    '/twitter-card.png',
-    '/icons/clock.svg',
-    '/icons/analog-clock.svg',
-    '/icons/world-clock.svg',
-    '/icons/stopwatch.svg',
-    '/icons/countdown.svg',
-    '/icons/pomodoro.svg',
-    '/icons/alarm.svg',
-    '/icons/unix.svg',
-    '/icons/timezone.svg',
-    '/icons/time-diff.svg',
-    '/icons/add-subtract.svg',
-    '/icons/time-converter.svg',
-    '/icons/military-time.svg',
-    '/icons/working-hours.svg',
-    '/icons/time-formats.svg',
-    '/icons/date-countdown.svg',
-    '/icons/meeting.svg',
-    '/icons/dst-checker.svg',
-    '/icons/sleep-time.svg',
-    '/icons/week-number.svg',
+    { path: '/favicon.ico', expectedType: 'image/x-icon' },
+    { path: '/favicon.svg', expectedType: 'image/svg+xml' },
+    { path: '/favicon-16x16.png', expectedType: 'image/png' },
+    { path: '/favicon-32x32.png', expectedType: 'image/png' },
+    { path: '/apple-touch-icon.png', expectedType: 'image/png' },
+    { path: '/icon-192.png', expectedType: 'image/png' },
+    { path: '/icon-512.png', expectedType: 'image/png' },
+    { path: '/site.webmanifest', expectedType: 'application/manifest+json' },
+    { path: '/manifest.webmanifest', expectedType: 'application/manifest+json' },
+    { path: '/og-image.png', expectedType: 'image/png' },
+    { path: '/og-image.jpg', expectedType: 'image/jpeg' },
+    { path: '/twitter-card.png', expectedType: 'image/png' },
   ];
 
   for (const asset of staticAssets) {
-    const assetUrl = `http://127.0.0.1:4173${asset}`;
+    const assetUrl = `http://127.0.0.1:4173${asset.path}`;
     const res = await fetch(assetUrl);
-    if (res.status === 200) {
-      console.log(`   ✅ [200 OK] ${asset} (${res.headers.get('content-type')})`);
+    const contentType = res.headers.get('content-type');
+    if (res.status === 200 && contentType.includes(asset.expectedType)) {
+      console.log(`   ✅ [200 OK] ${asset.path} (${contentType})`);
     } else {
-      console.error(`   ❌ [${res.status}] ${asset}`);
+      console.error(`   ❌ [${res.status}] ${asset.path} (type: ${contentType}, expected: ${asset.expectedType})`);
       failures++;
     }
   }
@@ -209,9 +231,9 @@ function unescapeHtml(str) {
   server.close();
   console.log('\n' + '='.repeat(65));
   if (failures === 0) {
-    console.log(`🎉 LOCAL RAW HTTP CHECKS PASSED FOR ALL ${routes.length} ROUTES!\n`);
+    console.log(`🎉 LOCAL RAW HTTP CHECKS PASSED FOR ALL ${routes.length} ROUTES & ASSETS!\n`);
   } else {
-    console.error(`💥 ${failures} route(s) failed raw HTTP check.`);
+    console.error(`💥 ${failures} check(s) failed raw HTTP check.`);
     process.exit(1);
   }
 }

@@ -12,7 +12,7 @@ export const ROUTES_SEO = {
   '/': {
     path: '/',
     title: 'Time Tools — Free Online Clocks, Timers & Converters',
-    description: 'Free, fast, and beautifully designed online time utilities: digital and analog clocks, precision stopwatch, countdown timers, Pomodoro focus timer, timezone converter, and more.',
+    description: 'Free, fast, and beautifully designed online time utilities: live clocks, precision stopwatch, countdowns, Pomodoro timer, timezone converter, and planners.',
     canonical: `${BASE_URL}/`,
     h1: 'Time Tools',
     og: {
@@ -1300,6 +1300,47 @@ export const ROUTES_SEO = {
         { path: '/date-countdown', label: 'Date Countdown', desc: 'Count down to holidays and events' },
         { path: '/time-diff', label: 'Time Difference', desc: 'Calculate the duration between two dates' },
         { path: '/working-hours', label: 'Working Hours', desc: 'Compute business days and shift hours' },
+      ],
+    },
+  },
+
+  '/about': {
+    path: '/about',
+    title: 'About Time Tools — Free Browser-Based Time Utilities',
+    description: 'Learn about Time Tools, our collection of 20 fast, free, privacy-first browser time utilities, live clocks, precision timers, and timezone converters.',
+    canonical: `${BASE_URL}/about`,
+    h1: 'About Time Tools',
+    og: {
+      title: 'About Time Tools — Free Browser-Based Time Utilities',
+      description: 'Learn about Time Tools, our collection of 20 fast, free, privacy-first browser time utilities, live clocks, precision timers, and timezone converters.',
+      url: `${BASE_URL}/about`,
+      type: 'website',
+      siteName: SITE_NAME,
+      image: DEFAULT_OG_IMAGE,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      image: DEFAULT_TWITTER_IMAGE,
+      title: 'About Time Tools — Free Browser-Based Time Utilities',
+      description: 'Discover Time Tools: 20 browser-based clocks, precision timers, timezone converters, and planners. Private, client-side, zero tracking.',
+    },
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'AboutPage',
+          '@id': `${BASE_URL}/about#webpage`,
+          url: `${BASE_URL}/about`,
+          name: 'About Time Tools',
+          description: 'Learn about Time Tools, our collection of 20 fast, free, privacy-first browser time utilities, live clocks, precision timers, and timezone converters.',
+          inLanguage: 'en-US',
+          isPartOf: {
+            '@type': 'WebSite',
+            '@id': `${BASE_URL}/#website`,
+            name: SITE_NAME,
+            url: `${BASE_URL}/`,
+          },
+        },
       ],
     },
   },

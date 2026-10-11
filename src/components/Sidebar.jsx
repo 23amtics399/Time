@@ -83,7 +83,17 @@ export default function Sidebar({ open, onClose }) {
 
         {/* Footer */}
         <div className="sidebar-footer">
-          <p className="text-faint text-xs">time.sji.one</p>
+          <NavLink to="/about" className="sidebar-footer-link" onClick={onClose}>
+            About Time Tools
+          </NavLink>
+          <a
+            href="https://sji.one/"
+            className="sidebar-footer-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SJI Network ↗
+          </a>
         </div>
       </nav>
     </>

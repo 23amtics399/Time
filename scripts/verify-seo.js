@@ -20,7 +20,7 @@ async function runVerification() {
   for (const route of routes) {
     const filePath = route.path === '/'
       ? path.resolve(distDir, 'index.html')
-      : path.resolve(distDir, route.path.replace(/^\//, ''), 'index.html');
+      : path.resolve(distDir, `${route.path.replace(/^\//, '')}.html`);
 
     if (!fs.existsSync(filePath)) {
       console.error(`❌ [${route.path}] File missing at ${filePath}`);
@@ -40,6 +40,11 @@ async function runVerification() {
     const descMatches = html.match(/<meta\s+name=["']description["'][^>]*>/gi) || [];
     if (descMatches.length !== 1) {
       errors.push(`meta description count is ${descMatches.length} (expected 1)`);
+    }
+
+    // Verify description length is within recommended 130-165 range
+    if (route.description.length > 165 || route.description.length < 120) {
+      errors.push(`description length ${route.description.length} outside recommended range`);
     }
 
     const canonicalMatches = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*>/gi) || [];
@@ -112,6 +117,12 @@ async function runVerification() {
     const h1Matches = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || [];
     if (h1Matches.length !== 1) {
       errors.push(`H1 count is ${h1Matches.length} (expected 1)`);
+    }
+
+    // Verify <footer> element exists in prerendered HTML
+    const footerMatches = html.match(/<footer[^>]*>([\s\S]*?)<\/footer>/gi) || [];
+    if (footerMatches.length !== 1) {
+      errors.push(`footer count is ${footerMatches.length} (expected 1)`);
     }
 
     const jsonLdMatches = html.match(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
@@ -202,6 +213,23 @@ function unescapeHtml(str) {
     }
   }
 
+  // Check 404.html
+  const path404 = path.resolve(distDir, '404.html');
+  if (fs.existsSync(path404)) {
+    const html404 = fs.readFileSync(path404, 'utf8');
+    if (!html404.includes('Page Not Found')) {
+      console.error('❌ 404.html missing "Page Not Found" text');
+      totalErrors++;
+    }
+    if (!html404.includes('noindex')) {
+      console.error('❌ 404.html missing noindex directive');
+      totalErrors++;
+    }
+  } else {
+    console.error('❌ 404.html missing in dist/');
+    totalErrors++;
+  }
+
   // Check sitemap.xml
   const sitemapPath = path.resolve(distDir, 'sitemap.xml');
   if (fs.existsSync(sitemapPath)) {
@@ -211,6 +239,11 @@ function unescapeHtml(str) {
         console.error(`❌ sitemap.xml missing canonical URL: ${route.canonical}`);
         totalErrors++;
       }
+    }
+    const lastmodMatches = sitemapContent.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
+    if (lastmodMatches.length !== routes.length) {
+      console.error(`❌ sitemap.xml lastmod count is ${lastmodMatches.length} (expected ${routes.length})`);
+      totalErrors++;
     }
   } else {
     console.warn(`⚠️ sitemap.xml not found in dist/`);
@@ -228,16 +261,49 @@ function unescapeHtml(str) {
     console.warn(`⚠️ robots.txt not found in dist/`);
   }
 
+  // Check _headers file
+  const headersPath = path.resolve(distDir, '_headers');
+  if (fs.existsSync(headersPath)) {
+    const headersContent = fs.readFileSync(headersPath, 'utf8');
+    if (!headersContent.includes('Strict-Transport-Security: max-age=31536000')) {
+      console.error('❌ dist/_headers missing Strict-Transport-Security');
+      totalErrors++;
+    }
+  } else {
+    console.error('❌ _headers missing in dist/');
+    totalErrors++;
+  }
+
+  // Check _redirects file
+  const redirectsPath = path.resolve(distDir, '_redirects');
+  if (fs.existsSync(redirectsPath)) {
+    const redContent = fs.readFileSync(redirectsPath, 'utf8');
+    if (redContent.includes('/* /index.html 200')) {
+      console.error('❌ dist/_redirects contains catch-all 200 SPA rewrite!');
+      totalErrors++;
+    }
+    if (!redContent.includes('/clock/ /clock 308')) {
+      console.error('❌ dist/_redirects missing /clock/ 308 redirect');
+      totalErrors++;
+    }
+  } else {
+    console.error('❌ _redirects missing in dist/');
+    totalErrors++;
+  }
+
   // Check Static Assets in dist/
   const requiredAssets = [
+    'favicon.ico',
     'favicon.svg',
     'favicon-16x16.png',
     'favicon-32x32.png',
     'apple-touch-icon.png',
     'icon-192.png',
     'icon-512.png',
+    'site.webmanifest',
     'manifest.webmanifest',
     'og-image.png',
+    'og-image.jpg',
     'twitter-card.png',
     'icons/clock.svg',
     'icons/analog-clock.svg',

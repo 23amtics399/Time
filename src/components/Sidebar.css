@@ -83,6 +83,21 @@
 .sidebar-footer {
   padding: 0.75rem 1.25rem;
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-footer-link {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast);
+}
+
+.sidebar-footer-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
 }
 
 .sidebar-backdrop {

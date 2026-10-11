@@ -27,6 +27,8 @@ const TimeFormats = lazy(() => import('./tools/time-formats/TimeFormats'));
 const DSTChecker = lazy(() => import('./tools/dst-checker/DSTChecker'));
 const SleepTimePlanner = lazy(() => import('./tools/sleep-time/SleepTimePlanner'));
 const WeekNumber = lazy(() => import('./tools/week-number/WeekNumber'));
+const About = lazy(() => import('./pages/About'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function ToolFallback() {
   return (
@@ -72,6 +74,7 @@ export default function App() {
                 <Route path="/dst-checker"   element={<DSTChecker />} />
                 <Route path="/sleep-time"    element={<SleepTimePlanner />} />
                 <Route path="/week-number"   element={<WeekNumber />} />
+                <Route path="/about"         element={<About />} />
                 {/* 404 fallback */}
                 <Route path="*"              element={<NotFound />} />
               </Routes>
@@ -80,18 +83,5 @@ export default function App() {
         </TimerProvider>
       </AlarmProvider>
     </TimeProvider>
-  );
-}
-
-function NotFound() {
-  return (
-    <div className="tool-page" style={{ textAlign: 'center', paddingTop: '4rem' }}>
-      <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🕐</p>
-      <h1 style={{ marginBottom: '0.5rem' }}>404 — Page not found</h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-        This page doesn't exist or was moved.
-      </p>
-      <a href="/" className="btn btn-primary">Go home</a>
-    </div>
   );
 }

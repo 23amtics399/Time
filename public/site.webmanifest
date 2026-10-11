@@ -1,0 +1,26 @@
+{
+  "name": "Time Tools",
+  "short_name": "Time Tools",
+  "description": "Free, fast, and beautifully designed online time utilities: digital and analog clocks, precision stopwatch, countdown timers, Pomodoro focus timer, timezone converter, and more.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#09090f",
+  "theme_color": "#09090f",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"]
+}
