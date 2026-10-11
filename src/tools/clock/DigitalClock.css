@@ -12,12 +12,22 @@
 }
 
 .dc-fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: var(--bg);
-  margin: 0;
-  padding: 0;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  z-index: 9999 !important;
+  background: var(--bg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  animation: none !important;
+  transform: none !important;
 }
 
 

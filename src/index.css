@@ -229,7 +229,7 @@ ul, ol {
 }
 
 .exit-fullscreen {
-  position: absolute;
+  position: fixed;
   top: 1.5rem;
   right: 1.5rem;
   color: var(--text);
@@ -239,9 +239,13 @@ ul, ol {
   height: 44px;
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
-  z-index: 1000;
+  z-index: 10000;
   opacity: 1; /* Always visible */
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .exit-fullscreen:hover, .exit-fullscreen:focus-visible {

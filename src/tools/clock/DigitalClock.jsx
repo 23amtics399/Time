@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SEO from '../../components/SEO';
 import ToolGuide from '../../components/ToolGuide';
 import { ROUTES_SEO } from '../../data/seoConfig';
@@ -50,8 +50,40 @@ export default function DigitalClock() {
   const ampm = h < 12 ? 'AM' : 'PM';
 
   function toggleFullscreen() {
-    setFullscreen(f => !f);
+    if (!fullscreen) {
+      setFullscreen(true);
+      if (typeof document !== 'undefined' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } else {
+      setFullscreen(false);
+      if (typeof document !== 'undefined' && document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
   }
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      if (typeof document !== 'undefined' && !document.fullscreenElement) {
+        setFullscreen(false);
+      }
+    }
+    function onKeyDown(e) {
+      if (e.key === 'Escape' && fullscreen) {
+        if (typeof document !== 'undefined' && document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+        setFullscreen(false);
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [fullscreen]);
 
   return (
     <>

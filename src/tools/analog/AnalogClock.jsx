@@ -127,18 +127,52 @@ export default function AnalogClock() {
     timeStr = new Intl.DateTimeFormat('en-US', { timeZone: activeTimezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12 }).format(now);
   }
 
+  const enterFullscreen = () => {
+    setFullscreen(true);
+    if (typeof document !== 'undefined' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  };
+
+  const exitFullscreen = () => {
+    setFullscreen(false);
+    if (typeof document !== 'undefined' && document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      if (typeof document !== 'undefined' && !document.fullscreenElement) {
+        setFullscreen(false);
+      }
+    }
+    function onKeyDown(e) {
+      if (e.key === 'Escape' && fullscreen) {
+        exitFullscreen();
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [fullscreen]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const observer = new ResizeObserver(() => {
       // Calculate size based on container width AND viewport height to ensure it fits completely
-      const containerWidth = canvas.parentElement.clientWidth;
       const vh = window.innerHeight;
-      // Leave space for headers, text, and padding (approx 200px non-fullscreen, 100px fullscreen)
+      const vw = window.innerWidth;
+      const containerWidth = fullscreen ? vw - 40 : canvas.parentElement.clientWidth;
+      // Leave space for headers, text, and padding (approx 200px non-fullscreen, 120px fullscreen)
       const availableHeight = fullscreen ? vh - 120 : vh - 280;
       
-      const maxSize = Math.min(containerWidth, Math.max(availableHeight, 200), 600);
+      const maxSize = Math.min(containerWidth, Math.max(availableHeight, 200), fullscreen ? 760 : 600);
       const size = maxSize * window.devicePixelRatio;
       
       canvas.width  = size;
@@ -163,7 +197,7 @@ export default function AnalogClock() {
 
       <div className={`tool-page analog-page ${fullscreen ? 'analog-fullscreen' : ''}`}>
         {fullscreen && (
-          <button className="btn btn-ghost exit-fullscreen" onClick={() => setFullscreen(false)} aria-label="Exit full screen">
+          <button className="btn btn-ghost exit-fullscreen" onClick={exitFullscreen} aria-label="Exit full screen">
             <ExitFullscreenIcon />
           </button>
         )}
@@ -187,7 +221,7 @@ export default function AnalogClock() {
         {!fullscreen && (
           <>
             <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-              <button className="btn btn-secondary" onClick={() => setFullscreen(true)} aria-label="Go full screen">
+              <button className="btn btn-secondary" onClick={enterFullscreen} aria-label="Go full screen">
                 <FullscreenIcon /> Full screen
               </button>
             </div>
